@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="添加参演人员" :visible.sync="personAddDialog" center>
+  <el-dialog title="添加参演人员" :visible.sync="personAddDialog" center :close-on-click-modal="false" :show-close="false">
     <el-form :model="personDetail">
       <el-form-item label="添加头像">
         <Cropper :append-to-body="true" />
@@ -46,6 +46,11 @@ export default {
         type: 1,
         introduce: ''
       })
+    }
+  },
+  data() {
+    return {
+      visibleDialog: false
     }
   },
   methods: {
