@@ -21,7 +21,9 @@ export class BaseApi {
     return request({
       url: this.requestUrl,
       method: 'delete',
-      params
+      params: {
+        id: params
+      }
     })
   }
   add(data = {}) {

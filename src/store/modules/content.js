@@ -63,11 +63,19 @@ const state = {
     '科幻'
   ],
   person: [],
-  sortOption: []
+  sortOption: [],
+  contents: {},
+  editContentObj: {}
 }
 
 const mutations = {
-  SET_PERSONS(state, data) {
+  SET_EDIT_CONTENT(state, data = {}) {
+    state.editContentObj = data
+  },
+  SET_CONTENT(state, data = {}) {
+    state.contents = data
+  },
+  SET_PERSONS(state, data = {}) {
     state.person = data
   },
   SET_SORT_OPTION(state, data = {}) {
@@ -84,6 +92,9 @@ const mutations = {
   },
   DELETE_PERSON_BY_ID(state, id) {
     state.person.items = state.person.items.filter(personItem => id !== personItem.id)
+  },
+  DEL_CONTENT_BY_ID(state, id) {
+    state.contents.items = state.contents.items.filter(contentItem => id !== contentItem.id)
   }
 }
 
@@ -111,6 +122,21 @@ const actions = {
   },
   async addContent({ commit }, contentItem) {
     await content.add(contentItem)
+  },
+  async getContent({ commit }, pageNumber = 1) {
+    const pageSize = 20
+    const contentData = await content.get(Object.assign({
+      pageSize,
+      pageNumber
+    }, {}))
+    commit('SET_CONTENT', contentData)
+  },
+  async delContent({ commit }, contentId) {
+    await content.delete(contentId)
+    commit('DEL_CONTENT_BY_ID', contentId)
+  },
+  async editContent({ commit }, contentData) {
+    await content.update(contentData)
   }
 }
 export default {

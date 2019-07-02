@@ -11,7 +11,7 @@ const contentRouter = [
         name: 'contentIndex',
         component: () => import('@views/content/index'),
         meta: {
-          title: '内容管理',
+          title: '内容浏览',
           icon: 'content-paste'
         }
       },

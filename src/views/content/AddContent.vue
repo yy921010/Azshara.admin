@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import PersonService from '@api/Person'
 import cropper from '@components/Cropper'
 import AddPersonComponent from './AddPerson'
@@ -229,14 +229,36 @@ export default {
   },
   computed: {
     ...mapState('content', {
-      contentTypeRender: 'contentTypeRender',
-      ratingsRender: 'ratingsRender',
-      genres: 'genres'
+      contentTypeRender: s => s.contentTypeRender,
+      ratingsRender: s => s.ratingsRender,
+      genres: s => s.genres,
+      editContentObj: s => s.editContentObj
     })
   },
+  mounted() {
+    if (this.editContentObj.id) {
+      this.contentInfo.contentName = this.editContentObj.contentName
+      this.contentInfo.type = this.editContentObj.type
+      this.contentInfo.contentType = this.editContentObj.contentType
+      this.contentInfo.rating = this.editContentObj.rating
+      this.contentInfo.title = this.editContentObj.title
+      this.contentInfo.subtitle = this.editContentObj.subtitle
+      this.contentInfo.introduce = this.editContentObj.introduce
+      this.contentInfo.genres = this.editContentObj.genres
+      this.contentInfo.actors = this.editContentObj.actors
+      this.prepareDefinitions = this.editContentObj.definition
+    }
+  },
+  beforeDestroy() {
+    this.SET_EDIT_CONTENT({})
+  },
   methods: {
+    ...mapMutations('content', {
+      SET_EDIT_CONTENT: 'SET_EDIT_CONTENT'
+    }),
     ...mapActions('content', {
-      addContent: 'addContent'
+      addContent: 'addContent',
+      editContent: 'editContent'
     }),
     addPerson({ actionStr, personDetail }) {
       this.personAddDialog = false
@@ -249,9 +271,17 @@ export default {
         })
       }
     },
-    onSubmit() {
+    async onSubmit() {
       this.contentInfo.definition = this.prepareDefinitions
-      this.addContent(this.contentInfo)
+      if (this.editContentObj.id) {
+        await this.editContent(this.contentInfo)
+        this.$router.push({
+          name: 'contentIndex'
+        })
+      } else {
+        this.addContent(this.contentInfo)
+      }
+
       // this.$refs.contentForm.validate((valid) => {
       //   if (valid) {
       //     this.addContent(this.contentInfo)
