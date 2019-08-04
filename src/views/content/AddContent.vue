@@ -2,7 +2,7 @@
   <el-container>
     <el-header />
     <el-main>
-      <el-form ref="contentForm" :model="contentInfo" label-width="140px" :rules="contentRule">
+      <el-form ref="contentForm" :model="contentInfo" :rules="contentRule" label-width="200px">
         <el-form-item label="内容名称" prop="contentName">
           <el-input v-model="contentInfo.contentName" placeholder="请输入内容名称" :width="200" />
         </el-form-item>

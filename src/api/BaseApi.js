@@ -13,7 +13,7 @@ export class BaseApi {
   update(data = {}) {
     return request({
       url: this.requestUrl,
-      method: 'post',
+      method: 'put',
       data
     })
   }
@@ -21,16 +21,22 @@ export class BaseApi {
     return request({
       url: this.requestUrl,
       method: 'delete',
-      params: {
-        id: params
-      }
+      params
     })
   }
   add(data = {}) {
     return request({
       url: this.requestUrl,
-      method: 'put',
-      data: JSON.stringify(data)
+      method: 'post',
+      data
+    })
+  }
+
+  upload(data = {}) {
+    return request({
+      url: this.requestUrl,
+      method: 'post',
+      data
     })
   }
 }

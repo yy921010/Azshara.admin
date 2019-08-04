@@ -2,8 +2,8 @@
   <el-pagination
     background
     layout="total,prev, pager, next"
-    @current-change="changePage"
     :total="total"
+    @current-change="changePage"
   />
 </template>
 

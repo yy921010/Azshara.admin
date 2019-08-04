@@ -2,7 +2,7 @@ import { BaseApi } from './BaseApi'
 
 class Person extends BaseApi {
   constructor() {
-    super('/person')
+    super('/actor')
   }
 }
 const person = new Person()

@@ -8,7 +8,7 @@
             style="height: 300px"
             :img="url"
             :output-size="option.size"
-            :output-type="option.outputType"
+            :output-type="outputType"
             :info="true"
             :full="option.full"
             :can-move="option.canMove"
@@ -42,7 +42,9 @@
       :auto-upload="false"
       :show-file-list="true"
       :on-change="changeUpload"
+      :on-remove="removeUpload"
       list-type="picture"
+      :limit="1"
       accept="image/jpeg,image/gif,image/png"
     >
       <i class="el-icon-upload" />
@@ -53,12 +55,26 @@
 </template>
 
 <script>
+
+import { setFormDate } from '@/utils'
+
+import ImageService from '@api/Image'
+
 export default {
   name: 'Index',
   props: {
     appendToBody: {
       type: Boolean,
       default: false
+    },
+    outputType: {
+      type: String,
+      default: 'png'
+    },
+    scope: {
+      type: String,
+      default: 'actors',
+      validator: (value) => (['actors', 'poster'].includes(value))
     }
   },
   data: () => ({
@@ -71,7 +87,6 @@ export default {
     option: {
       info: true, // 裁剪框的大小信息
       outputSize: 0.8, // 裁剪生成图片的质量
-      outputType: 'webp', // 裁剪生成图片的格式
       canScale: false, // 图片是否允许滚轮缩放
       autoCrop: true, // 是否默认生成截图框
       fixedBox: false, // 固定截图框大小 不允许改变
@@ -83,6 +98,7 @@ export default {
       infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
     }
   }),
+
   methods: {
     getCropBlob(fn) {
       return this.$refs.cropper.getCropBlob(fn)
@@ -93,20 +109,40 @@ export default {
         this.fileInfo = ''
         return
       }
-      this.$refs.cropper.getCropBlob((data) => {
-        this.previewPictures.push({
-          name: `${this.fileInfo.uid}_${this.fixedNumberStr}`,
-          url: window.URL.createObjectURL(data)
-        })
-      })
+      this.beginUploadImage()
       this.cropperVisible = false
       // 后续通知底层进行图片添加
     },
+    /**
+     * 开始文件上传
+     */
+    beginUploadImage() {
+      this.$refs.cropper.getCropBlob(async data => {
+        const optionDate = setFormDate({
+          filename: 'image',
+          file: data,
+          data: {
+            scope: this.scope,
+            fixed: this.fixedNumber.join('X')
+          }
+        })
+        const resp = await ImageService.upload(optionDate)
+        this.previewPictures.push({
+          name: `${resp.fileName}`,
+          url: `http://${resp.imageService}${resp.path}/${resp.fileName}`,
+          id: resp.imageId,
+          path: resp.path
+        })
+        this.$emit('onCropper', resp.imageId)
+      })
+    },
+
     changeImageSize(flexedNumber) {
       this.fixedNumberStr = flexedNumber
       this.fixedNumber = flexedNumber.split(',')
       this.$refs.cropper.refresh()
     },
+
     changeUpload(file) {
       const isLt5M = file.size / 1024 / 1024 < 5
       const _this = this
@@ -122,6 +158,15 @@ export default {
         _this.cropperVisible = true
       }
       this.fileInfo = file
+    },
+
+    removeUpload(file) {
+      this.previewPictures = this.previewPictures.filter(item => item.id !== file.id)
+      ImageService.delete({
+        id: file.id,
+        fileName: file.name,
+        filePath: file.path
+      })
     }
   }
 }

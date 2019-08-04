@@ -1,19 +1,40 @@
 import request from '@/utils/request'
 
+const tokens = {
+  admin: {
+    token: 'admin-token'
+  },
+  editor: {
+    token: 'editor-token'
+  }
+}
+
 export function login(data) {
-  return request({
-    url: '/user/login',
-    method: 'post',
-    data
+  return new Promise((resolve, reject) => {
+    resolve({
+      code: 0,
+      data: tokens['admin']
+    })
   })
+  // return request({
+  //   url: '/user/login',
+  //   method: 'post',
+  //   data
+  // })
 }
 
 export function getInfo(token) {
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+  return new Promise((resolve, reject) => {
+    resolve({
+      code: 0,
+      data: {}
+    })
   })
+  // return request({
+  //   url: '/user/info',
+  //   method: 'get',
+  //   params: { token }
+  // })
 }
 
 export function logout() {

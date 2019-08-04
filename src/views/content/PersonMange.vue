@@ -103,7 +103,7 @@ export default {
       this.personDetail.introduce = personInfo.introduce
       this.personDetail.id = personInfo.id
     },
-    async dialogAction({ actionStr, personDetail }) {
+    async dialogAction({ actionStr, personDetail, imageId }) {
       this.personAddDialog = false
       if (actionStr === 'cancel') {
         this.initPersonDetail()
@@ -116,10 +116,13 @@ export default {
           message: '更新成功!'
         })
       } else if (this.dialogStatus === 'add') {
-        await this.addUser(personDetail)
+        Object.assign(personDetail, {
+          imageId: imageId + ''
+        })
+        const { message } = await this.addUser(personDetail)
         this.$message({
           type: 'success',
-          message: '新增成功!'
+          message
         })
       }
     },
