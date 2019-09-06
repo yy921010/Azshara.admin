@@ -129,7 +129,6 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <add-person-component :person-detail="personDetail" :person-add-dialog="personAddDialog" @onDialogAction="addPerson" />
     </el-main>
     <el-footer />
   </el-container>
@@ -137,14 +136,11 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import PersonService from '@api/Person'
 import cropper from '@components/Cropper'
-import AddPersonComponent from './AddPerson'
 export default {
   name: 'AddContent',
   components: {
-    cropper,
-    AddPersonComponent
+    cropper
   },
   data() {
     return {
@@ -263,12 +259,7 @@ export default {
     addPerson({ actionStr, personDetail }) {
       this.personAddDialog = false
       if (actionStr === 'finish') {
-        PersonService.add(personDetail).then(() => {
-          this.$message({
-            type: 'success',
-            message: '新增成功!'
-          })
-        })
+
       }
     },
     async onSubmit() {
@@ -300,11 +291,6 @@ export default {
     },
     getPersonByName(key) {
       if (key !== '') {
-        PersonService.get({
-          name: key
-        }).then(resp => {
-          this.persons = resp.items
-        })
       }
     },
     openDefinition() {

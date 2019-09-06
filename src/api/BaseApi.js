@@ -10,29 +10,21 @@ export class BaseApi {
       params
     })
   }
-  update(data = {}) {
+  update(data = {}, updateId) {
     return request({
-      url: this.requestUrl,
+      url: this.requestUrl + `/${updateId}`,
       method: 'put',
       data
     })
   }
-  delete(params = {}) {
+  delete(data = {}) {
     return request({
-      url: this.requestUrl,
+      url: this.requestUrl + `/${data.id}`,
       method: 'delete',
-      params
-    })
-  }
-  add(data = {}) {
-    return request({
-      url: this.requestUrl,
-      method: 'post',
       data
     })
   }
-
-  upload(data = {}) {
+  add(data = {}) {
     return request({
       url: this.requestUrl,
       method: 'post',

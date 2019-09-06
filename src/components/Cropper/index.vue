@@ -58,7 +58,8 @@
 
 import { setFormDate } from '@/utils'
 
-import ImageService from '@api/Image'
+import { deleteImage, addImage } from '@api/image-service'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'Index',
@@ -78,7 +79,6 @@ export default {
     }
   },
   data: () => ({
-    previewPictures: [],
     cropperVisible: false,
     fileInfo: null,
     fixedNumber: [1, 1],
@@ -98,17 +98,29 @@ export default {
       infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
     }
   }),
-
+  computed: {
+    ...mapState('image', {
+      previewPictures: s => s.previewPictures
+    })
+  },
   methods: {
+    ...mapMutations('image', {
+      'addPictureArrs': 'ADD_PICTURE_ARR',
+      'deletePictureById': 'DELETE_PICTURE_BY_ID',
+      'clearPictures': 'CLEAR_PICTURE'
+    }),
+
     getCropBlob(fn) {
       return this.$refs.cropper.getCropBlob(fn)
     },
+
     dialogAction(actionStr) {
       if (actionStr === 'cancel') {
         this.url = ''
         this.fileInfo = ''
         return
       }
+      this.clearPictures()
       this.beginUploadImage()
       this.cropperVisible = false
       // 后续通知底层进行图片添加
@@ -126,10 +138,10 @@ export default {
             fixed: this.fixedNumber.join('X')
           }
         })
-        const resp = await ImageService.upload(optionDate)
-        this.previewPictures.push({
+        const resp = await addImage(optionDate)
+        this.addPictureArrs({
           name: `${resp.fileName}`,
-          url: `http://${resp.imageService}${resp.path}/${resp.fileName}`,
+          url: `http://127.0.0.1:7001/public/${resp.path}/${resp.fileName}`,
           id: resp.imageId,
           path: resp.path
         })
@@ -159,14 +171,14 @@ export default {
       }
       this.fileInfo = file
     },
-
-    removeUpload(file) {
-      this.previewPictures = this.previewPictures.filter(item => item.id !== file.id)
-      ImageService.delete({
-        id: file.id,
-        fileName: file.name,
-        filePath: file.path
-      })
+    /**
+     *
+     * @param id actorId
+     * @returns {Promise<void>}
+     */
+    async removeUpload({ id }) {
+      this.deletePictureById(id)
+      await deleteImage(id)
     }
   }
 }

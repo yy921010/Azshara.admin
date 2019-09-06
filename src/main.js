@@ -11,6 +11,7 @@ import '@styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import dayjs from 'dayjs'
 
 import '@icons' // icon
 import '@/permission' // permission control
@@ -33,6 +34,8 @@ import VueCropper from 'vue-cropper'
 Vue.use(ElementUI, { locale })
 Vue.use(VueCropper)
 Vue.config.productionTip = false
+
+Vue.prototype.$dayjs = dayjs
 
 new Vue({
   el: '#app',

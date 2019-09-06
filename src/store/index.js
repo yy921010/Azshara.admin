@@ -5,7 +5,7 @@ import app from './modules/app'
 import settings from './modules/settings'
 import user from './modules/user'
 import content from './modules/content'
-
+import image from './modules/image'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -13,7 +13,8 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
-    content
+    content,
+    image
   },
   getters
 })

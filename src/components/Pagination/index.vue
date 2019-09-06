@@ -3,6 +3,7 @@
     background
     layout="total,prev, pager, next"
     :total="total"
+    :page-size="20"
     @current-change="changePage"
   />
 </template>
