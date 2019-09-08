@@ -9,10 +9,19 @@ const contentRouter = [
       {
         path: 'actor',
         name: 'contentActor',
-        component: () => import('@views/actor/actor'),
+        component: () => import('@views/content/actor/actor'),
         meta: {
           title: '演员',
-          icon: 'content-add'
+          icon: 'actor'
+        }
+      },
+      {
+        path: 'genre',
+        name: 'contentGenre',
+        component: () => import('@views/content/genres/genres'),
+        meta: {
+          title: '流派',
+          icon: 'genres'
         }
       },
       {

@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="添加参演人员" :visible.sync="isShow" center :close-on-click-modal="false" :show-close="false">
     <el-form :model="detail">
-      <el-form-item label="添加头像">
+      <el-form-item label="人物海报">
         <Cropper :append-to-body="true" @onCropper="onCropper" />
       </el-form-item>
       <el-form-item label="人员名字">

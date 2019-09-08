@@ -24,12 +24,12 @@
         </el-table-column>
         <el-table-column label="创建时间" prop="createdTime" align="center">
           <template slot-scope="scope">
-            <span>{{ $dayjs(scope.row.createAt).format('YYYY-MM-DD HH:MM:ss') }}</span>
+            <span>{{ $dayjs(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="更新时间" prop="updateTime" align="center">
           <template slot-scope="scope">
-            <span>{{ $dayjs(scope.row.updateAt).format('YYYY-MM-DD HH:MM:ss') }}</span>
+            <span>{{ $dayjs(scope.row.updateAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" prop="id" align="center">
