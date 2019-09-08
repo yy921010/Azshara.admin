@@ -11,7 +11,7 @@ const aggregationRouter = [{
     {
       path: 'index',
       name: 'aggregationIndex',
-      component: () => import('@views/aggregation'),
+      component: () => import('@views/aggregation/aggregation'),
       meta: {
         title: '楼层管理',
         icon: 'floor'

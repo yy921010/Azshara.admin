@@ -1,4 +1,3 @@
-import content from '@api/Content'
 const state = {
   contentTypeRender: [
     {
@@ -82,25 +81,18 @@ const mutations = {
 const actions = {
 
   async addContent({ commit }, contentItem) {
-    await content.add(contentItem)
   },
 
   async getContent({ commit }, pageNumber = 1) {
-    const pageSize = 20
-    const contentData = await content.get(Object.assign({
-      pageSize,
-      pageNumber
-    }, {}))
-    commit('SET_CONTENT', contentData)
+
   },
 
   async delContent({ commit }, contentId) {
-    await content.delete(contentId)
-    commit('DEL_CONTENT_BY_ID', contentId)
+
   },
 
   async editContent({ commit }, contentData) {
-    await content.update(contentData)
+
   }
 }
 export default {

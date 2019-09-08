@@ -1,0 +1,105 @@
+<template>
+  <div class="app-container">
+    <table-filter @onCreate="createVideo" />
+    <el-table
+      :data="video.items"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;margin-top: 20px"
+    >
+      <el-table-column label="序号" prop="id" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="内容名称" prop="contentName" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contentName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="剧种" prop="id" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <el-tag v-if=" scope.row.type===1">单品</el-tag>
+          <el-tag v-else type="warning">剧集</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="内容类型" prop="id" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contentType }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" width="150px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.updateTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="150px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.createdTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="editVideo(row)">
+            编辑
+          </el-button>
+          <el-button
+            v-if="row.status!='deleted'"
+            size="mini"
+            type="danger"
+            @click="deleteVideo(row,'deleted')"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <Pagination :total="video.total" @change="paginationChange" />
+  </div>
+</template>
+
+<script>
+import TableFilter from '@components/TableFilter'
+import { getVideo } from '@api/video-service'
+import Pagination from '@components/Pagination'
+
+export default {
+  name: 'Video',
+  components: {
+    TableFilter,
+    Pagination
+  },
+  data() {
+    return {
+      video: {}
+    }
+  },
+  mounted() {
+    this.getVideo()
+  },
+  methods: {
+    async getVideo(pageNumber = 1) {
+      const pageSize = 20
+      const videoResult = await getVideo({
+        pageNumber,
+        pageSize
+      })
+      this.video = videoResult
+    },
+    createVideo() {
+
+    },
+    paginationChange(num) {
+      this.getVideo(num)
+    },
+    editVideo() {},
+    deleteVideo() {}
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

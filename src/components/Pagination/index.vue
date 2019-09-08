@@ -1,11 +1,13 @@
 <template>
-  <el-pagination
-    background
-    layout="total,prev, pager, next"
-    :total="total"
-    :page-size="20"
-    @current-change="changePage"
-  />
+  <div class="pagination-container">
+    <el-pagination
+      background
+      layout="total,prev, pager, next"
+      :total="total"
+      :page-size="20"
+      @current-change="changePage"
+    />
+  </div>
 </template>
 
 <script>
@@ -27,5 +29,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .pagination-container{
+    background: #fff;
+    padding: 32px 16px;
+    margin-top: 30px;
+  }
 </style>

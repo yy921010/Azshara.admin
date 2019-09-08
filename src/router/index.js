@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Aggregation from './modules/Aggregation'
-import content from './modules/Content'
+import video from './modules/Video'
 import pageside from './modules/PageSide'
 import error from './modules/Error'
 import dashboard from './modules/Dashboard'
@@ -31,7 +31,7 @@ const createRouter = () => new Router({
   routes: [
     ...dashboard,
     ...Aggregation,
-    ...content,
+    ...video,
     ...pageside,
     ...error,
     // 404 page must be placed at the end !!!

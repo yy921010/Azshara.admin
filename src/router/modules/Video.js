@@ -27,18 +27,18 @@ const contentRouter = [
       {
         path: 'index',
         name: 'contentIndex',
-        component: () => import('@views/content/index'),
+        component: () => import('@views/content/video/video'),
         meta: {
           title: '浏览',
-          icon: 'content-paste'
+          icon: 'video'
         }
       },
       {
-        path: 'add',
-        name: 'contentAdd',
-        component: () => import('@views/content/AddContent.vue'),
+        path: 'detail',
+        name: 'contentDetail',
+        component: () => import('@views/content/video/video-detail'),
         meta: {
-          title: '新增',
+          title: '详情',
           icon: 'content-add'
         }
       }

@@ -44,7 +44,7 @@
       :on-change="changeUpload"
       :on-remove="removeUpload"
       list-type="picture"
-      :limit="1"
+      :limit="limit"
       accept="image/jpeg,image/gif,image/png"
     >
       <i class="el-icon-upload" />
@@ -67,6 +67,10 @@ export default {
     appendToBody: {
       type: Boolean,
       default: false
+    },
+    limit: {
+      type: Number,
+      default: 1
     },
     outputType: {
       type: String,

@@ -1,63 +1,57 @@
 <template>
-
-  <el-container>
-    <el-header>
-      <el-button size="mini" type="primary" @click="addActor">新增</el-button>
-    </el-header>
-    <el-main>
-      <el-table
-        :data="actor.items"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-      >
-        <el-table-column label="id" prop="id" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="人名" prop="name" sortable="custom" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" align="center">
-          <template slot-scope="scope">
-            <span>{{ $dayjs(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" prop="updateTime" align="center">
-          <template slot-scope="scope">
-            <span>{{ $dayjs(scope.row.updateAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" prop="id" align="center">
-          <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="editActor(row)">
-              编辑
-            </el-button>
-            <el-button
-              v-if="row.status!='deleted'"
-              size="mini"
-              type="danger"
-              @click="deleteActor(row,'deleted')"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-main>
-    <el-footer>
-      <Pagination :total="actor.total" @change="paginationChange" />
-    </el-footer>
+  <div class="app-container">
+    <table-filter @onCreate="addActor"></table-filter>
+    <el-table
+      :data="actor.items"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
+      <el-table-column label="id" prop="id" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="人名" prop="name" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" prop="createdTime" align="center">
+        <template slot-scope="scope">
+          <span>{{ $dayjs(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" prop="updateTime" align="center">
+        <template slot-scope="scope">
+          <span>{{ $dayjs(scope.row.updateAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" prop="id" align="center">
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="editActor(row)">
+            编辑
+          </el-button>
+          <el-button
+            v-if="row.status!='deleted'"
+            size="mini"
+            type="danger"
+            @click="deleteActor(row,'deleted')"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <Pagination :total="actor.total" @change="paginationChange" />
     <actor-detail :detail="actorDetail" :is-show="detailVisible" @onDetail="onDetail" />
-  </el-container>
+  </div>
 </template>
 
 <script>
 import Pagination from '@components/Pagination'
+import TableFilter from '@components/TableFilter'
 import { getActor, addActor, updateActor, deleteActor } from '@api/actor-service'
 import { getImage } from '@api/image-service'
 import actorDetail from './actor-detail'
@@ -67,7 +61,8 @@ export default {
   name: 'Actor',
   components: {
     Pagination,
-    actorDetail
+    actorDetail,
+    TableFilter
   },
   data() {
     return {
