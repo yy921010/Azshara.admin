@@ -40,7 +40,7 @@
       drag
       :file-list="previewPictures"
       :auto-upload="false"
-      :show-file-list="true"
+      :show-file-list="showFileList"
       :on-change="changeUpload"
       :on-remove="removeUpload"
       list-type="picture"
@@ -67,6 +67,10 @@ export default {
     appendToBody: {
       type: Boolean,
       default: false
+    },
+    showFileList: {
+      type: Boolean,
+      default: true
     },
     limit: {
       type: Number,

@@ -1,6 +1,6 @@
 <template>
   <div class="video-detail-container">
-    <el-form ref="postForm" :model="videoDetail" :rules="rules" class="form-container">
+    <el-form ref="postForm" :model="videoDetail" class="form-container">
       <stickly :z-index="10" class="sub-navbar">
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           提交
@@ -12,8 +12,20 @@
       <div class="createPost-main-container">
         <el-row>
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
+            <el-form-item style="margin-bottom: 40px;">
               <md-input v-model="videoDetail.contentName" :max-length="100" placeholder="请输入内容标题">内容标题</md-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item>
+              <md-input v-model="videoDetail.title" :max-length="100" placeholder="影片标题"> 影片标题</md-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item>
+              <md-input v-model="videoDetail.subTitle" :max-length="100" placeholder="副标题"> 副标题</md-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -29,13 +41,13 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label-width="60px" label="集数" class="postInfo-container-item">
-                <el-input v-model="videoDetail.serialNumber" placeholder="集数" />
+                <el-input v-model="videoDetail.serialNumber" placeholder="集数" :disabled="videoDetail.type ===1" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label-width="60px" label="风格" class="postInfo-container-item">
                 <el-select v-model="videoDetail.genre" filterable default-first-option placeholder="风格">
-                  <el-option v-for="(item,index) in genres" :key="item+index" :label="item" :value="item" />
+                  <el-option v-for="(item,index) in genres" :key="index" :label="item.name" :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -89,47 +101,109 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label-width="60px" label="演员:" class="postInfo-container-item">
                 <el-select
-                  v-model="videoDetail.author"
+                  v-model="videoDetail.actors"
                   :remote-method="getActorByName"
                   filterable
+                  multiple
                   default-first-option
                   remote
                   placeholder="输入人员"
                 >
-                  <el-option v-for="(item,index) in actors" :key="item+index" :label="item" :value="item" />
+                  <el-option v-for="(item,index) in actors" :key="index" :label="item.name" :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label-width="60px" label="导演:" class="postInfo-container-item">
+                <el-select
+                  v-model="videoDetail.director"
+                  :remote-method="getActorByName"
+                  filterable
+                  multiple
+                  default-first-option
+                  remote
+                  placeholder="输入人员"
+                >
+                  <el-option v-for="(item,index) in director" :key="index" :label="item.name" :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item>
-                <md-input v-model="videoDetail.title" :max-length="100" placeholder="影片标题"> 影片标题</md-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item>
-                <md-input v-model="videoDetail.subtitle" :max-length="100" placeholder="副标题"> 副标题</md-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
           <el-form-item prop="content" style="margin-bottom: 30px;">
-            <el-button>添加媒资</el-button>
+            <el-button size="mini" type="success" @click="showDefinitionDialog('add')">添加媒资</el-button>
+            <el-table
+              :data="videoDetail.definitions"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%"
+            >
+              <el-table-column label="清晰度" prop="type" align="center">
+                <template slot-scope="scope">
+                  <span>{{ getDefinitionStr(scope.row.type) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="地址" prop="url" align="center">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.url }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center">
+                <template slot-scope="{row}">
+                  <el-button
+                    v-if="row.status!='deleted'"
+                    size="mini"
+                    type="danger"
+                    @click="deleteDefinition(row,'deleted')"
+                  >
+                    删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-form-item>
           <el-form-item prop="content" style="margin-bottom: 30px;">
-            <Tinymce ref="editor" v-model="videoDetail.content" :height="400" />
+            <Tinymce ref="editor" v-model="videoDetail.introduce" :height="400" />
           </el-form-item>
 
           <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-            <Cropper :append-to-body="false" @onCropper="onCropper" :limit="50"/>
+            <Cropper :append-to-body="false" :limit="50" :show-file-list="false" @onCropper="onCropper" />
           </el-form-item>
 
         </div>
       </div>
     </el-form>
+    <el-dialog
+      title="媒资编辑"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      <el-form>
+        <el-form-item label="清晰度">
+          <el-select v-model="definition.type">
+            <el-option label="预告" :value="1" />
+            <el-option label="标清" :value="2" />
+            <el-option label="高清" :value="3" />
+            <el-option label="蓝光" :value="4" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="definition.url" type="text" class="input-with-select">
+            <el-select slot="prepend" v-model="prependDefinitionUrl" placeholder="请选择">
+              <el-option label="http://" value="http://" />
+              <el-option label="https://" value="https://" />
+            </el-select>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="definitionDialogAction('cancel')">取 消</el-button>
+        <el-button type="primary" @click="definitionDialogAction('confirm')">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -138,6 +212,9 @@ import stickly from '@components/Stickly'
 import mdInput from '@components/MDinput'
 import Tinymce from '@components/Tinymce'
 import Cropper from '@components/Cropper'
+import { getGenre } from '@api/genre-service'
+import { getActor } from '@api/actor-service'
+import { addDefinition, deleteDefinition } from '@api/definition-service'
 
 export default {
   name: 'VideoDetail',
@@ -149,35 +226,160 @@ export default {
   },
   data() {
     return {
-      videoDetail: {
-        contentName: ''
+      dialogVisible: false,
+      prependDefinitionUrl: '',
+      definition: {
+        type: 1,
+        url: ''
       },
-      rules: {},
+      videoDetail: {
+        contentName: '',
+        actors: [],
+        title: '',
+        subTitle: '',
+        director: [],
+        definitions: [],
+        introduce:''
+      },
       loading: false,
       genres: [],
-      actors: []
+      actors: [],
+      director: []
     }
   },
   computed: {
     ratingsRender() {
-      return []
+      return [
+        {
+          label: '普遍级',
+          value: '0+'
+        },
+        {
+          label: '保护级',
+          value: '6+'
+        },
+        {
+          label: '辅导十二岁级',
+          value: '12+'
+        },
+        {
+          label: '辅导十五岁级',
+          value: '15+'
+        },
+        {
+          label: '限制级',
+          value: '18+'
+        }
+      ]
     },
     contentTypeRender() {
-      return []
+      return [
+        {
+          label: '电影',
+          value: 1
+        },
+        {
+          label: '剧集',
+          value: 2
+        },
+        {
+          label: '动漫',
+          value: 3
+        },
+        {
+          label: '综艺',
+          value: 4
+        },
+        {
+          label: '短视频',
+          value: 5
+        }
+      ]
     }
   },
+  async mounted() {
+    const pageSize = 20
+    const pageNumber = 1
+    const { items } = await getGenre({
+      pageSize,
+      pageNumber
+    })
+    this.genres = items
+  },
   methods: {
+    getDefinitionStr(key) {
+      const definitionMap = {
+        1: '预告',
+        2: '标清',
+        3: '高清',
+        4: '蓝光'
+      }
+      return definitionMap[key]
+    },
+    deleteDefinition({ id, type }) {
+      this.$confirm(`是否删除${this.getDefinitionStr(type)}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await deleteDefinition(id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        this.videoDetail.definitions = this.videoDetail.definitions.filter(item => item.id !== id)
+      })
+    },
     submitForm() {
+      console.log(this.videoDetail)
     },
     cancelForm() {
     },
     getGenre() {
 
     },
-    getActorByName() {
-
+    async getActorByName(name) {
+      if (!name) {
+        return
+      }
+      const { items } = await getActor({
+        name
+      })
+      this.actors = items
+      this.director = items
     },
-    onCropper() {}
+
+    onCropper({ imageId, fileName, path }) {
+      console.log(imageId, fileName, path)
+    },
+
+    async definitionDialogAction(actionStr) {
+      this.dialogVisible = false
+      if (actionStr === 'cancel') {
+        this.definition = {
+          type: 1,
+          url: ''
+        }
+        return
+      }
+      if (actionStr === 'confirm') {
+        const { topicId } = await addDefinition({
+          type: this.definition.type,
+          url: this.prependDefinitionUrl + this.definition.url
+        })
+        this.videoDetail.definitions.push({
+          id: topicId,
+          type: this.definition.type,
+          url: this.prependDefinitionUrl + this.definition.url
+        })
+      }
+    },
+    showDefinitionDialog(actionStr) {
+      this.dialogVisible = true
+      if (actionStr === 'add') {
+
+      }
+    }
   }
 }
 </script>
