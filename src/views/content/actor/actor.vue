@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <table-filter @onCreate="addActor"></table-filter>
+    <table-filter @onCreate="addActor" />
     <el-table
       :data="actor.items"
       border
@@ -55,14 +55,14 @@ import TableFilter from '@components/TableFilter'
 import { getActor, addActor, updateActor, deleteActor } from '@api/actor-service'
 import { getImage } from '@api/image-service'
 import actorDetail from './actor-detail'
-import { mapMutations } from 'vuex'
-import { imageService } from '@/settings'
+import { mapMutations, mapState } from 'vuex'
 export default {
   name: 'Actor',
   components: {
     Pagination,
     actorDetail,
     TableFilter
+
   },
   data() {
     return {
@@ -74,6 +74,11 @@ export default {
       detailVisible: false,
       detailStatus: ''
     }
+  },
+  computed: {
+    ...mapState('image', {
+      previewPictures: s => s.previewPictures
+    })
   },
   mounted() {
     this.getActors()
@@ -107,8 +112,8 @@ export default {
         })
         if (imageObject.length === 1) {
           this.addPreviewPicture({
-            name: 'editPictureName',
-            url: imageService + imageObject[0].url,
+            name: imageObject[0].name,
+            path: imageObject[0].url,
             id: imageObject[0].id
           })
         }
@@ -136,7 +141,7 @@ export default {
       this._initDetail({})
     },
 
-    async onDetail({ action, detail, pictureId }) {
+    async onDetail({ action, detail }) {
       this.detailVisible = false
       if (action === 'cancel') {
         this._initDetail({})
@@ -144,6 +149,7 @@ export default {
         return
       }
       let message
+      const pictureId = this.previewPictures[0].id
       switch (this.detailStatus) {
         case 'ADD':
           if (pictureId) {

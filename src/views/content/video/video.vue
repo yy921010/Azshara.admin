@@ -31,12 +31,12 @@
       </el-table-column>
       <el-table-column label="更新时间" width="150px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.updateTime }}</span>
+          <span>{{ $dayjs(scope.row.updateAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="150px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.createdTime }}</span>
+          <span>{{ $dayjs(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -62,7 +62,7 @@
 
 <script>
 import TableFilter from '@components/TableFilter'
-import { getVideo } from '@api/video-service'
+import { getVideo, deleteVideo } from '@api/video-service'
 import Pagination from '@components/Pagination'
 
 export default {
@@ -89,13 +89,28 @@ export default {
       this.video = videoResult
     },
     createVideo() {
-
+      this.$router.push({
+        name: 'contentDetail'
+      })
     },
     paginationChange(num) {
       this.getVideo(num)
     },
     editVideo() {},
-    deleteVideo() {}
+    deleteVideo({ contentName, id }) {
+      this.$confirm(`是否删除${contentName}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await deleteVideo(id)
+        await this.getVideo()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      })
+    }
   }
 }
 </script>

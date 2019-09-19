@@ -8,3 +8,18 @@ export function getVideo(params) {
     params
   })
 }
+
+export function addVideo(data = {}) {
+  return request({
+    url,
+    method: 'post',
+    data
+  })
+}
+
+export function deleteVideo(videoId) {
+  return request({
+    url: `/video/${videoId}`,
+    method: 'delete'
+  })
+}

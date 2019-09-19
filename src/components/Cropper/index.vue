@@ -1,8 +1,8 @@
 <template>
   <div class="cropper">
-    <el-dialog :visible.sync="cropperVisible" :append-to-body="appendToBody">
+    <el-dialog :visible.sync="cropperVisible" :append-to-body="appendToBody" title="图片裁剪">
       <el-form>
-        <el-form-item>
+        <el-form-item label="图片预览">
           <vueCropper
             ref="cropper"
             style="height: 300px"
@@ -22,12 +22,14 @@
             :fixed-box="option.fixedBox"
           />
         </el-form-item>
-        <el-form-item label="选择尺寸">
-          <el-button @click="changeImageSize('1,1')">1:1</el-button>
-          <el-button @click="changeImageSize('16,9')">16:9</el-button>
-          <el-button @click="changeImageSize('3,5')">3:5</el-button>
-          <el-button @click="changeImageSize('21,9')">21:9</el-button>
-          <el-button @click="changeImageSize('3,4')">3:4</el-button>
+        <el-form-item label="类型">
+          <el-select v-model="pictureType" value @change="changeImageSize">
+            <el-option label="头像" :value="1" />
+            <el-option label="横向海报" :value="2" />
+            <el-option label="竖直海报" :value="3" />
+            <el-option label="宣传海报" :value="4" />
+            <el-option label="自定义" :value="5" />
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -38,12 +40,9 @@
     <el-upload
       action=""
       drag
-      :file-list="previewPictures"
       :auto-upload="false"
-      :show-file-list="showFileList"
       :on-change="changeUpload"
-      :on-remove="removeUpload"
-      list-type="picture"
+      :show-file-list="false"
       :limit="limit"
       accept="image/jpeg,image/gif,image/png"
     >
@@ -51,26 +50,40 @@
       <div class="el-upload__text">点击上传</div>
       <div class="el-upload__tip">支持绝大多数图片格式，单张图片最大支持5MB</div>
     </el-upload>
+    <div class="poster__preview">
+      <ul class="previews">
+        <li v-for="(item,index) in previewPictures" :key="index" class="preview-item">
+          <preview-image :id="item.id" :name="item.name" :src="item.path" @onImage="removeUpload" />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
 
 import { setFormDate } from '@/utils'
-
+import previewImage from './PreviewImage'
 import { deleteImage, addImage } from '@api/image-service'
 import { mapState, mapMutations } from 'vuex'
 
+const imageFixedMap = {
+  '1': [1, 1],
+  '2': [16, 9],
+  '3': [3, 5],
+  '4': [21, 9],
+  '5': false
+}
+
 export default {
   name: 'Index',
+  components: {
+    previewImage
+  },
   props: {
     appendToBody: {
       type: Boolean,
       default: false
-    },
-    showFileList: {
-      type: Boolean,
-      default: true
     },
     limit: {
       type: Number,
@@ -82,15 +95,14 @@ export default {
     },
     scope: {
       type: String,
-      default: 'actors',
-      validator: (value) => (['actors', 'poster'].includes(value))
+      default: 'actors'
     }
   },
   data: () => ({
     cropperVisible: false,
     fileInfo: null,
     fixedNumber: [1, 1],
-    fixedNumberStr: '',
+    pictureType: 1,
     url: '',
     option: {
       info: true, // 裁剪框的大小信息
@@ -111,6 +123,9 @@ export default {
       previewPictures: s => s.previewPictures
     })
   },
+  mounted() {
+    this.clearPictures()
+  },
   methods: {
     ...mapMutations('image', {
       'addPictureArrs': 'ADD_PICTURE_ARR',
@@ -123,14 +138,13 @@ export default {
     },
 
     dialogAction(actionStr) {
+      this.cropperVisible = false
       if (actionStr === 'cancel') {
         this.url = ''
         this.fileInfo = ''
         return
       }
-      this.clearPictures()
       this.beginUploadImage()
-      this.cropperVisible = false
       // 后续通知底层进行图片添加
     },
     /**
@@ -143,13 +157,13 @@ export default {
           file: data,
           data: {
             scope: this.scope,
-            fixed: this.fixedNumber.join('X')
+            fixed: this.fixedNumber.join('X'),
+            type: this.pictureType
           }
         })
         const resp = await addImage(optionDate)
         this.addPictureArrs({
           name: `${resp.fileName}`,
-          url: `http://127.0.0.1:7001/public/${resp.path}/${resp.fileName}`,
           id: resp.imageId,
           path: resp.path
         })
@@ -157,9 +171,14 @@ export default {
       })
     },
 
-    changeImageSize(flexedNumber) {
-      this.fixedNumberStr = flexedNumber
-      this.fixedNumber = flexedNumber.split(',')
+    changeImageSize() {
+      const flexedNumber = this.pictureType + ''
+      if (imageFixedMap[flexedNumber]) {
+        this.option.fixed = true
+        this.fixedNumber = imageFixedMap[flexedNumber]
+      } else {
+        this.option.fixed = false
+      }
       this.$refs.cropper.refresh()
     },
 
@@ -184,7 +203,7 @@ export default {
      * @param id actorId
      * @returns {Promise<void>}
      */
-    async removeUpload({ id }) {
+    async removeUpload(id) {
       this.deletePictureById(id)
       await deleteImage(id)
     }
@@ -192,6 +211,13 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .previews{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    .preview-item{
+        margin-right: 15px;
+    }
+  }
 </style>
