@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     getShowSrc() {
-      return Settings.imageService + this.src + '/' + this.name
+      return this.name ? Settings.imageService + this.src + '/' + this.name : Settings.imageService + this.src
     }
   },
   methods: {

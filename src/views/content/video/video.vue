@@ -62,8 +62,9 @@
 
 <script>
 import TableFilter from '@components/TableFilter'
-import { getVideo, deleteVideo } from '@api/video-service'
+import { getVideo, deleteVideo, getVideoExtra } from '@api/video-service'
 import Pagination from '@components/Pagination'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Video',
@@ -80,6 +81,9 @@ export default {
     this.getVideo()
   },
   methods: {
+    ...mapMutations('content', {
+      changeVideoInfo: 'CHANGE_VIDEO_INFO'
+    }),
     async getVideo(pageNumber = 1) {
       const pageSize = 20
       const videoResult = await getVideo({
@@ -89,6 +93,23 @@ export default {
       this.video = videoResult
     },
     createVideo() {
+      this.changeVideoInfo({
+        contentName: '',
+        actors: [],
+        title: '',
+        subTitle: '',
+        director: [],
+        definitions: [],
+        introduce: '',
+        pictures: [],
+        language: '',
+        publishDate: '',
+        country: '',
+        rating: '',
+        genre: '',
+        serialNumber: '',
+        type: ''
+      })
       this.$router.push({
         name: 'contentDetail'
       })
@@ -96,7 +117,21 @@ export default {
     paginationChange(num) {
       this.getVideo(num)
     },
-    editVideo() {},
+    async editVideo(video) {
+      const contentId = video.contentId
+      const { actors, definitions, genres, pictures } = await getVideoExtra(contentId)
+      if (contentId) {
+        video.actors = actors.filter(item => item.type === 2) || []
+        video.director = actors.filter(item => item.type === 1) || []
+        video.definitions = definitions || []
+        video.genre = genres[0] || []
+        video.pictures = pictures
+      }
+      this.changeVideoInfo(video)
+      this.$router.push({
+        name: 'contentDetail'
+      })
+    },
     deleteVideo({ contentName, id }) {
       this.$confirm(`是否删除${contentName}`, {
         confirmButtonText: '确定',

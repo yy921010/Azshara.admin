@@ -170,7 +170,7 @@
           </el-form-item>
 
           <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-            <Cropper :append-to-body="false" :limit="50" :show-file-list="false" @onCropper="onCropper" />
+            <Cropper :append-to-body="false" :limit="50" :show-file-list="false" />
           </el-form-item>
 
         </div>
@@ -209,9 +209,9 @@ import Tinymce from '@components/Tinymce'
 import Cropper from '@components/Cropper'
 import { getGenre } from '@api/genre-service'
 import { getActor } from '@api/actor-service'
-import { addVideo } from '@api/video-service'
+import { addVideo, updateVideo } from '@api/video-service'
 import { addDefinition, deleteDefinition } from '@api/definition-service'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'VideoDetail',
@@ -266,6 +266,9 @@ export default {
   computed: {
     ...mapState('image', {
       previewPictures: s => s.previewPictures
+    }),
+    ...mapState('content', {
+      editVideoInfo: s => s.editVideoInfo
     }),
     ratingsRender() {
       return [
@@ -324,8 +327,26 @@ export default {
       pageNumber
     })
     this.genres = items
+    if (this.editVideoInfo) {
+      if (this.editVideoInfo.pictures.length !== 0) {
+        this.videoDetail = this.editVideoInfo
+        const images = this.videoDetail.pictures.map(item => ({
+          name: '',
+          id: item.id,
+          path: item.url
+        }))
+        images.forEach((item) => {
+          this.addPictureArrs(item)
+        })
+      }
+    }
   },
   methods: {
+    ...mapMutations('image', {
+      'addPictureArrs': 'ADD_PICTURE_ARR',
+      'deletePictureById': 'DELETE_PICTURE_BY_ID',
+      'clearPictures': 'CLEAR_PICTURE'
+    }),
     getDefinitionStr(key) {
       const definitionMap = {
         1: '预告',
@@ -410,11 +431,18 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const detailVideo = this._dealWithDetail()
-          await addVideo(detailVideo)
+          let message = '更新成功'
+          if (this.editVideoInfo.id) {
+            await updateVideo(this.editVideoInfo)
+          } else {
+            const detailVideo = this._dealWithDetail()
+            await addVideo(detailVideo)
+            message = '新增成功'
+          }
+
           await this.$message({
             type: 'success',
-            message: '新增成功'
+            message
           })
           this.$router.push({
             name: 'contentIndex'
@@ -447,7 +475,6 @@ export default {
       this.director = items
     },
 
-
     async definitionDialogAction(actionStr) {
       this.dialogVisible = false
       if (actionStr === 'cancel') {
@@ -469,11 +496,8 @@ export default {
         })
       }
     },
-    showDefinitionDialog(actionStr) {
+    showDefinitionDialog() {
       this.dialogVisible = true
-      if (actionStr === 'add') {
-
-      }
     }
   }
 }

@@ -23,3 +23,18 @@ export function deleteVideo(videoId) {
     method: 'delete'
   })
 }
+
+export function getVideoExtra(contentId) {
+  return request({
+    url: `/video-extra?contentId=${contentId}`,
+    method: 'get'
+  })
+}
+
+export function updateVideo(data) {
+  return request({
+    url: `video/${data.id}`,
+    method: 'put',
+    data
+  })
+}

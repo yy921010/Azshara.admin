@@ -36,6 +36,7 @@ const contentRouter = [
       {
         path: 'detail',
         name: 'contentDetail',
+        hidden: true,
         component: () => import('@views/content/video/video-detail'),
         meta: {
           title: '详情',
