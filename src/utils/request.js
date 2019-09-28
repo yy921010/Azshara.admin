@@ -1,12 +1,12 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import Cookies from 'js-cookie'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API + `/${process.env.VUE_APP_API_VERSION}`, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
@@ -15,7 +15,6 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    console.log('request config--->', config)
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -71,12 +70,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    const errorCode = error.request.status
+    const errorUrl = error.config.url
+    store.commit('errorMessage/showErrorMsgByCode', { errorCode, errorUrl })
     return Promise.reject(error)
   }
 )

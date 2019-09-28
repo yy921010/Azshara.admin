@@ -6,14 +6,14 @@ const data = Mock.mock({
     contentName: '@ctitle',
     'type|1': [1, 2],
     'contentType|1': [1, 2, 3, 4, 5, 6, 7],
-    createdTime: '@datetime',
-    updateTime: '@datetime'
+    createAt: '@datetime',
+    updateAt: '@datetime'
   }]
 })
 
 export default [
   {
-    url: '/content',
+    url: '/video',
     type: 'get',
     response: config => {
       const items = data.items

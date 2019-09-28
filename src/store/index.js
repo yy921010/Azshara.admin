@@ -6,6 +6,7 @@ import settings from './modules/settings'
 import user from './modules/user'
 import content from './modules/content'
 import image from './modules/image'
+import errorMessage from './modules/error_message'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -14,7 +15,8 @@ const store = new Vuex.Store({
     settings,
     user,
     content,
-    image
+    image,
+    errorMessage
   },
   getters
 })
