@@ -1,15 +1,14 @@
 import Layout from '@/layout'
-const dashBoardRouter = [
+export default [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home-module',
     children: [{
-      path: 'dashboard',
+      path: 'home-module',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
   }
 ]
-export default dashBoardRouter

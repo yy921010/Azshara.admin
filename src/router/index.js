@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Aggregation from './modules/Aggregation'
-import video from './modules/Video'
-import pageside from './modules/PageSide'
-import error from './modules/Error'
-import dashboard from './modules/Dashboard'
+import TopicModule from './modules/TopicModule'
+import FilmModule from './modules/FilmModule'
+import NavigatorModule from './modules/NavigatorModule'
+import ErrorModule from './modules/Error'
+import HomeModule from './modules/HomeModule'
+import UserModule from './modules/UserModule'
+import SettingModule from './modules/SettingModule'
+import LiveModule from './modules/LiveModule'
+import FeedbackModule from './modules/FeedbackModule'
 Vue.use(Router)
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -29,13 +33,21 @@ const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: [
-    ...dashboard,
-    ...Aggregation,
-    ...video,
-    ...pageside,
-    ...error,
+    ...HomeModule,
+    ...UserModule,
+    ...NavigatorModule,
+    ...TopicModule,
+    ...FilmModule,
+    ...LiveModule,
+    ...SettingModule,
+    ...FeedbackModule,
+    ...ErrorModule,
     // 404 page must be placed at the end !!!
-    { path: '*', redirect: '/404', hidden: true }
+    {
+      path: '*',
+      redirect: '/404',
+      hidden: true
+    }
   ]
 })
 

@@ -79,7 +79,11 @@ export default {
         pageSize
       })
     },
-    addAggregation() {},
+    addAggregation() {
+      this.$router.push({
+        name: 'aggregationDetail'
+      })
+    },
     editAggregation() {},
     deleteAggregation() {},
     paginationChange(pageNumber) {
