@@ -1,17 +1,17 @@
 import Layout from '@/layout'
 const pageSideRouter = [
   {
-    path: '/pageSize',
+    path: '/navigator-module',
     component: Layout,
-    redirect: '/pageSize/index',
+    redirect: '/navigator-module/index',
     meta: { title: '页面管理', icon: 'page' },
     children: [
       {
         path: 'index',
-        name: 'pageManager',
-        component: () => import('@/views/pageSide/index'),
+        name: 'navigator',
+        component: () => import('@/views/navigator/navigator-show'),
         meta: {
-          title: '页面浏览',
+          title: '导航配置',
           icon: 'navigator'
         }
       }

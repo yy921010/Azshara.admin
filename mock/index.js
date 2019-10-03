@@ -6,13 +6,15 @@ import content from './contents'
 import genre from './genres'
 import actor from './actor'
 import aggregation from './aggregation'
+import navigator from './navigator'
 
 const mocks = [
   ...user,
   ...content,
   ...genre,
   ...actor,
-  ...aggregation
+  ...aggregation,
+  ...navigator
 ]
 
 // for front mock
