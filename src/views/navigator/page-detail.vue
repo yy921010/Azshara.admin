@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="添加导航" :visible.sync="isShow" center :close-on-click-modal="false" :show-close="false">
+  <el-dialog title="添加页面" :visible.sync="isShow" center :close-on-click-modal="false" :show-close="false">
     <el-form :model="detail">
       <el-form-item label="导航标题">
         <el-input v-model="detail.name" placeholder="导航标题" />
@@ -21,7 +21,7 @@
 <script>
 
 export default {
-  name: 'NavigatorDetail',
+  name: 'PageDetail',
   props: {
     isShow: {
       type: Boolean,

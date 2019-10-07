@@ -18,10 +18,10 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否显示" prop="name" sortable="custom" align="center">
+      <el-table-column label="是否子页面？" prop="name" sortable="custom" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.visible === 1">显示</el-tag>
-          <el-tag v-else type="danger">隐藏</el-tag>
+          <el-tag v-if="scope.row.isSub === 1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createdTime" align="center">
@@ -84,8 +84,8 @@ export default {
       const pageSize = 20
       this.navigator = await getNavigator({ pageSize, pageNumber })
     },
-    _initDetail({ name, visible }) {
-      this.navigatorDetail = { name, visible }
+    _initDetail({ name, isSub }) {
+      this.navigatorDetail = { name, isSub }
     },
     addNavigator() {
       this.detailVisible = true
@@ -107,12 +107,12 @@ export default {
       }, () => {
       })
     },
-    editNavigator({ id, name, visible }) {
+    editNavigator({ id, name, isSub }) {
       this.detailStatus = 'EDIT'
       this.detailVisible = true
       this._initDetail({
         name,
-        visible,
+        isSub,
         id
       })
     },
