@@ -43,3 +43,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function userRegister(data = {}) {
+  return request({
+    url: '/user-register',
+    method: 'post',
+    data
+  })
+}

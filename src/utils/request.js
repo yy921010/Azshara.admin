@@ -65,6 +65,8 @@ service.interceptors.response.use(
           })
         })
         return Promise.reject(new Error(msg || 'Error'))
+      case 343:
+        return Promise.reject(new Error(msg || 'Error'))
       default:
         return Promise.reject(new Error('Error'))
     }

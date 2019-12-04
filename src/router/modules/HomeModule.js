@@ -1,5 +1,6 @@
 import Layout from '@/layout'
-export default [
+
+const homeModule = [
   {
     path: '/',
     component: Layout,
@@ -12,3 +13,5 @@ export default [
     }]
   }
 ]
+
+export default homeModule

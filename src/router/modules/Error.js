@@ -1,7 +1,7 @@
 const errorRouter = [
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
+    component: () => import('@/views/user-register/index'),
     hidden: true
   },
   {
