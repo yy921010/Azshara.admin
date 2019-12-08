@@ -47,6 +47,18 @@ export default [
     }
   },
 
+  {
+    url: '/user-register',
+    type: 'post',
+    response: config => {
+      return {
+        data: {},
+        status: 'success',
+        code: 0
+      }
+    }
+  },
+
   // get user info
   {
     url: '/user/info\.*',

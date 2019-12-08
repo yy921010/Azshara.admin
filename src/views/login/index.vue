@@ -1,11 +1,9 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">Tomokotv Admin</h3>
       </div>
-
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -40,15 +38,16 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
+      <div class="button-wrap">
+        <el-button class="item-button" :loading="loading" type="success" @click.native.prevent="handleRegister">注册</el-button>
+        <el-button class="item-button" :loading="loading" type="primary" @click.native.prevent="handleLogin">登录</el-button>
+      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data() {
@@ -89,6 +88,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', {
+      login: 'login'
+    }),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -99,16 +101,20 @@ export default {
         this.$refs.password.focus()
       })
     },
+    handleRegister() {
+      this.$router.push('register')
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
+          this.login(this.loginForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
+            }).catch(() => {
+              this.loading = false
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -163,6 +169,7 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
+
 }
 </style>
 
@@ -171,6 +178,12 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
+.button-wrap{
+  display: flex;
+  .item-button{
+    width: 100%;
+  }
+}
 .login-container {
   min-height: 100%;
   width: 100%;

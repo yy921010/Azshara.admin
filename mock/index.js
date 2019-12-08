@@ -7,6 +7,7 @@ import genre from './genres'
 import actor from './actor'
 import aggregation from './aggregation'
 import navigator from './navigator'
+import image from './image'
 
 const mocks = [
   ...user,
@@ -14,7 +15,8 @@ const mocks = [
   ...genre,
   ...actor,
   ...aggregation,
-  ...navigator
+  ...navigator,
+  ...image
 ]
 
 // for front mock

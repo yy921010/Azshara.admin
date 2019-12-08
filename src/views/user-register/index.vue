@@ -11,6 +11,7 @@
       <div class="title-container">
         <h3 class="title">tomokotv 用户注册</h3>
       </div>
+      <Cropper scope="user"/>
       <el-form-item prop="nickName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -94,11 +95,16 @@
 </template>
 
 <script>
-import { userRegister } from '@api/user'
+import { userRegister } from '@api/user-service'
+import Cropper from '@components/Cropper'
+import { mapState } from 'vuex'
 
 let passwordCache = ''
 export default {
   name: 'UserRegister',
+  components: {
+    Cropper
+  },
   data() {
     const passwordValidate = (rule, value, callback) => {
       passwordCache = value
@@ -144,13 +150,27 @@ export default {
 
     }
   },
+  computed: {
+    ...mapState('image', {
+      previewPictures: s => s.previewPictures
+    })
+  },
   methods: {
     handleRegister() {
       this.$refs.registerForm.validate(async valid => {
         if (valid) {
           const userInfo = this.registerModel
           delete userInfo.repassword
+          this.loading = true
           await userRegister(userInfo)
+          this.$notify({
+            message: '用户注册成功，请进入邮箱激活',
+            type: 'success'
+          })
+          this.loading = false
+          setTimeout(() => {
+            this.$router.push('/login')
+          }, 2000)
         } else {
           return false
         }
@@ -203,6 +223,9 @@ export default {
       background: rgba(0, 0, 0, 0.1);
       border-radius: 5px;
       color: #454545;
+    }
+    .el-upload-dragger{
+      background-color: transparent;
     }
   }
 </style>

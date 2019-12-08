@@ -47,7 +47,15 @@ service.interceptors.response.use(
     const responseData = response.data
     const code = responseData.code
     const msg = responseData.msg
+    const status = responseData.status
     const data = responseData.data
+    switch (status) {
+      case 'success':
+        return data
+      case 'failed':
+        return Promise.reject(new Error(msg || 'Error'))
+    }
+
     // if the custom code is not 20000, it is judged as an error.
     switch (code) {
       case 0:
@@ -65,10 +73,8 @@ service.interceptors.response.use(
           })
         })
         return Promise.reject(new Error(msg || 'Error'))
-      case 343:
-        return Promise.reject(new Error(msg || 'Error'))
       default:
-        return Promise.reject(new Error('Error'))
+        return Promise.reject(new Error(msg || 'Error'))
     }
   },
   error => {

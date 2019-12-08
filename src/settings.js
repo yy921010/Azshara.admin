@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'L.D.R admin',
+  title: 'Tomokotv admin',
 
   /**
    * @type {boolean} true | false
