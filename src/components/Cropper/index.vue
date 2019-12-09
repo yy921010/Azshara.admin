@@ -39,11 +39,11 @@
     </el-dialog>
     <el-upload
       action=""
-      drag
       :auto-upload="false"
-      :on-change="changeUpload"
       :show-file-list="false"
       :limit="limit"
+      :on-change="changeUpload"
+      :before-upload="beforeUpload"
       accept="image/jpeg,image/gif,image/png"
     >
       <i class="el-icon-upload" />
@@ -182,12 +182,21 @@ export default {
       this.$refs.cropper.refresh()
     },
 
-    changeUpload(file) {
+    beforeUpload(file) {
       const isLt5M = file.size / 1024 / 1024 < 5
-      const _this = this
       if (!isLt5M) {
         this.$message.error('上传文件大小不能超过 5MB!')
-        return false
+      }
+      return isLt5M
+    },
+
+
+    changeUpload(file) {
+      const _this = this
+      const isLt5M = file.size / 1024 / 1024 < 5
+      if (!isLt5M) {
+        this.$message.error('上传文件大小不能超过 5MB!')
+        return
       }
       const reader = new FileReader()
       reader.readAsDataURL(file.raw)
