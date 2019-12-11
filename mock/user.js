@@ -1,13 +1,4 @@
 
-const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
-  }
-}
-
 const users = {
   'admin-token': {
     roles: ['admin'],
@@ -26,23 +17,14 @@ const users = {
 export default [
   // user login
   {
-    url: '/user/login',
+    url: '/oauth2/token',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
-
-      // mock error
-      if (!token) {
-        return {
-          code: 60204,
-          message: 'Account and password are incorrect.'
-        }
-      }
-
       return {
-        code: 0,
-        data: token
+        accessToken: 'e6edhaskjhdsjakdjksadhsakasojgoji4et3tjo',
+        accessTokenExpiresAt: '2019-12-31T00:00:00.000Z',
+        refreshTokenExpiresAt: '2020-12-31T00:00:00.000Z',
+        refreshToken: 'dsadsasadsadsadsadsadsadsad'
       }
     }
   },
@@ -84,7 +66,7 @@ export default [
 
   // user logout
   {
-    url: '/user/logout',
+    url: '/oauth2/revoke-token',
     type: 'post',
     response: _ => {
       return {
