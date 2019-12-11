@@ -7,12 +7,21 @@ const UserModuleRouter = [
     meta: { title: '直播管理', icon: 'page' },
     children: [
       {
-        path: 'index',
-        name: 'liveModule',
-        component: () => import('@/views/pageSide/index'),
+        path: 'channel',
+        name: 'channelModule',
+        component: () => import('@/views/pageSide/channel'),
         meta: {
-          title: '直播管理',
+          title: '频道模块',
           icon: 'live'
+        }
+      },
+      {
+        path: 'program',
+        name: 'programModule',
+        component: () => import('@/views/pageSide/program'),
+        meta: {
+          title: '节目单模块',
+          icon: 'genres'
         }
       }
     ]
