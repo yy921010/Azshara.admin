@@ -1,25 +1,24 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function login(data = {}) {
+  data.grant_type = 'password'
+  const params = new URLSearchParams()
+  params.append('grant_type', 'password')
+  params.append('username', data.username)
+  params.append('password', data.password)
   return request({
     url: '/oauth2/token',
     method: 'post',
-    data
+    data: params
   })
 }
 
-export function getInfo(token) {
-  return new Promise((resolve, reject) => {
-    resolve({
-      code: 0,
-      data: {}
-    })
+export function getInfo(username) {
+  return request({
+    url: '/user',
+    method: 'get',
+    params: { username }
   })
-  // return request({
-  //   url: '/user/info',
-  //   method: 'get',
-  //   params: { token }
-  // })
 }
 
 export function logout(token) {

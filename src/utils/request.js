@@ -18,6 +18,7 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['Authorization'] = 'Bearer ' + getToken()
+      config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
     }
     if (config.url && /oauth2/.test(config.url)) {
       config.headers['Authorization'] = 'Basic ' + process.env.VUE_APP_DEVICE_TOKEN
@@ -33,16 +34,6 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
     const url = response.config.url
     const responseData = response.data
@@ -62,6 +53,8 @@ service.interceptors.response.use(
   error => {
     const errorCode = error.request.status
     const errorUrl = error.config.url
+    console.log(error)
+    MessageBox(error.error_description)
     store.commit('errorMessage/showErrorMsgByCode', { errorCode, errorUrl })
     return Promise.reject(error)
   }
