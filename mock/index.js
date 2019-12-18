@@ -8,6 +8,8 @@ import actor from './actor'
 import aggregation from './aggregation'
 import navigator from './navigator'
 import image from './image'
+import channel from './channel'
+import program from './program'
 
 const mocks = [
   ...user,
@@ -16,7 +18,9 @@ const mocks = [
   ...actor,
   ...aggregation,
   ...navigator,
-  ...image
+  ...image,
+  ...channel,
+  ...program
 ]
 
 // for front mock

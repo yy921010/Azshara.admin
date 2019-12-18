@@ -190,7 +190,6 @@ export default {
       return isLt5M
     },
 
-
     changeUpload(file) {
       const _this = this
       const isLt5M = file.size / 1024 / 1024 < 5

@@ -11,7 +11,7 @@
       <div class="title-container">
         <h3 class="title">tomokotv 用户注册</h3>
       </div>
-      <Cropper scope="user"/>
+      <Cropper scope="user" />
       <el-form-item prop="nickName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
