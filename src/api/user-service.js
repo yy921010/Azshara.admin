@@ -1,46 +1,31 @@
 import request from '@/utils/request'
 
-const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
-  }
-}
-
-export function login(data) {
-  return new Promise((resolve, reject) => {
-    resolve({
-      code: 0,
-      data: tokens['admin']
-    })
-  })
-  // return request({
-  //   url: '/user/login',
-  //   method: 'post',
-  //   data
-  // })
-}
-
-export function getInfo(token) {
-  return new Promise((resolve, reject) => {
-    resolve({
-      code: 0,
-      data: {}
-    })
-  })
-  // return request({
-  //   url: '/user/info',
-  //   method: 'get',
-  //   params: { token }
-  // })
-}
-
-export function logout() {
+export function login(data = {}) {
+  data.grant_type = 'password'
+  const params = new URLSearchParams()
+  params.append('grant_type', 'password')
+  params.append('username', data.username)
+  params.append('password', data.password)
   return request({
-    url: '/user/logout',
-    method: 'post'
+    url: '/oauth2/token',
+    method: 'post',
+    data: params
+  })
+}
+
+export function getInfo(username) {
+  return request({
+    url: '/user',
+    method: 'get',
+    params: { username }
+  })
+}
+
+export function logout(token) {
+  return request({
+    url: '/oauth2/revoke-token',
+    method: 'post',
+    data: token
   })
 }
 

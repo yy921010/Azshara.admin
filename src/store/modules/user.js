@@ -5,7 +5,8 @@ import { resetRouter } from '@/router'
 const state = {
   token: getToken(),
   name: '',
-  avatar: ''
+  avatar: '',
+  username: ''
 }
 
 const mutations = {
@@ -17,32 +18,35 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_USERNAME: (state, username) => {
+    state.username = username
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  async login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { token } = response
-        commit('SET_TOKEN', token)
-        setToken(token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      login({ username: username.trim(), password: password })
+        .then(response => {
+          const { accessToken } = response
+          commit('SET_TOKEN', accessToken)
+          commit('SET_USERNAME', username)
+          setToken(accessToken)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
     })
   },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        console.log(response)
+      getInfo(state.username).then(response => {
         const { name, avatar } = response
-
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(response)
@@ -55,7 +59,9 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout({
+        access_token: state.token
+      }).then(() => {
         commit('SET_TOKEN', '')
         removeToken()
         resetRouter()

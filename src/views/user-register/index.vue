@@ -11,7 +11,9 @@
       <div class="title-container">
         <h3 class="title">tomokotv 用户注册</h3>
       </div>
-      <Cropper scope="user" />
+      <el-form-item class="avatar-item">
+        <Cropper scope="avatar" :limit="1" @onCropper="handleCropper" />
+      </el-form-item>
       <el-form-item prop="nickName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -175,6 +177,12 @@ export default {
           return false
         }
       })
+    },
+    handleCropper(images) {
+      if (images && images.length > 0) {
+        const image = images[0]
+        this.registerModel.avatarUrl = image.url
+      }
     }
   }
 
@@ -235,6 +243,9 @@ export default {
   $dark_gray: #889aa4;
   $light_gray: #eee;
   $cursor: #fff;
+  .avatar-item{
+    text-align: center;
+  }
   .user-register {
     min-height: 100%;
     width: 100%;

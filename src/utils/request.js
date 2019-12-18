@@ -2,8 +2,6 @@ import axios from 'axios'
 import { MessageBox } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import Cookies from 'js-cookie'
-
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -19,8 +17,11 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
-      config.headers['x-csrf-token'] = Cookies.get('csrfToken')
+      config.headers['Authorization'] = 'Bearer ' + getToken()
+      config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
+    }
+    if (config.url && /oauth2/.test(config.url)) {
+      config.headers['Authorization'] = 'Basic ' + process.env.VUE_APP_DEVICE_TOKEN
     }
     return config
   },
@@ -33,53 +34,27 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
+    const url = response.config.url
     const responseData = response.data
-    const code = responseData.code
     const msg = responseData.msg
     const status = responseData.status
     const data = responseData.data
+    if (/oauth2/.test(url)) {
+      return responseData
+    }
     switch (status) {
       case 'success':
         return data
       case 'failed':
         return Promise.reject(new Error(msg || 'Error'))
     }
-
-    // if the custom code is not 20000, it is judged as an error.
-    switch (code) {
-      case 0:
-        return data
-      case 50008:
-      case 50012:
-      case 50014:
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-        return Promise.reject(new Error(msg || 'Error'))
-      default:
-        return Promise.reject(new Error(msg || 'Error'))
-    }
   },
   error => {
     const errorCode = error.request.status
     const errorUrl = error.config.url
+    console.log(error)
+    MessageBox(error.error_description)
     store.commit('errorMessage/showErrorMsgByCode', { errorCode, errorUrl })
     return Promise.reject(error)
   }
