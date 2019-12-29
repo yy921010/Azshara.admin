@@ -153,10 +153,11 @@ export default {
           }
         })
         const resp = await addImage(optionDate)
+        const picUrl = resp.pictureUrl
+        const fileName = picUrl.split('/')[picUrl.split('/').length - 1]
         this.viewPictures.push({
-          name: `${resp.name}`,
-          type: this.pictureType,
-          url: resp.url
+          name: fileName,
+          url: picUrl
         })
         this.$emit('onCropper', this.viewPictures)
       })

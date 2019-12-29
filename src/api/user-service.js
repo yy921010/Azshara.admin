@@ -7,7 +7,7 @@ export function login(data = {}) {
   params.append('username', data.username)
   params.append('password', data.password)
   return request({
-    url: '/oauth2/token',
+    url: '/token',
     method: 'post',
     data: params
   })
@@ -15,24 +15,47 @@ export function login(data = {}) {
 
 export function getInfo(username) {
   return request({
-    url: '/user',
-    method: 'get',
-    params: { username }
+    url: `/user/${username}`,
+    method: 'get'
   })
 }
 
 export function logout(token) {
+  const params = new URLSearchParams()
+  params.append('token', token.token)
+  params.append('clientId', token.clientId)
+  params.append('clientSecret', token.clientSecret)
   return request({
-    url: '/oauth2/revoke-token',
+    url: '/token/revoke',
     method: 'post',
-    data: token
+    data: params
   })
 }
 
 export function userRegister(data = {}) {
   return request({
-    url: '/user-register',
-    method: 'post',
+    url: '/user',
+    method: 'put',
     data
+  })
+}
+
+export function getUser(pageNumber = 1, pageSize = 20) {
+  return request({
+    url: '/user',
+    method: 'get',
+    params: {
+      pageNumber,
+      pageSize
+    }
+  })
+}
+export function delUserByName(username) {
+  return request({
+    url: '/user',
+    method: 'delete',
+    params: {
+      username
+    }
   })
 }
