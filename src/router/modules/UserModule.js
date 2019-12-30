@@ -9,7 +9,7 @@ const UserModuleRouter = [
       {
         path: 'index',
         name: 'pageManager',
-        component: () => import('@/views/pageSide/index'),
+        component: () => import('@/views/users/index'),
         meta: {
           title: '用户管理',
           icon: 'users'
