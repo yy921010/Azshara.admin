@@ -13,12 +13,12 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    if (store.getters.token) {
+    if (store.getters.token && /token/.test(config.url)) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['Authorization'] = 'Bearer ' + getToken()
-      config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
+      // config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
     } else if (config.url && /token/.test(config.url)) {
       config.headers['Authorization'] = 'Basic ' + process.env.VUE_APP_DEVICE_TOKEN
     }

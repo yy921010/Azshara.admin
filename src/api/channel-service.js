@@ -11,3 +11,26 @@ export function getChannel(params = {}) {
   })
 }
 
+export function updateChannel(data = {}, id) {
+  return request({
+    url: `${url}/${id}`,
+    method: 'post',
+    data
+  })
+}
+
+export function addChannel(data = {}) {
+  return request({
+    url,
+    method: 'put',
+    data
+  })
+}
+
+export function delChannel(channelName = '') {
+  return request({
+    url: `${url}?channelName=${channelName}`,
+    method: 'delete'
+  })
+}
+

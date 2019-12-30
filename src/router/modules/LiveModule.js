@@ -9,7 +9,7 @@ const UserModuleRouter = [
       {
         path: 'channel',
         name: 'channelModule',
-        component: () => import('@/views/pageSide/channel'),
+        component: () => import('@/views/live/channel'),
         meta: {
           title: '频道模块',
           icon: 'live'
@@ -18,7 +18,7 @@ const UserModuleRouter = [
       {
         path: 'program',
         name: 'programModule',
-        component: () => import('@/views/pageSide/program'),
+        component: () => import('@/views/live/program'),
         meta: {
           title: '节目单模块',
           icon: 'genres'

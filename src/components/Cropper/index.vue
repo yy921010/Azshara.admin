@@ -28,7 +28,8 @@
             <el-option label="横向海报" :value="2" />
             <el-option label="竖直海报" :value="3" />
             <el-option label="宣传海报" :value="4" />
-            <el-option label="自定义" :value="5" />
+            <el-option label="2:1 logo" :value="5" />
+            <el-option label="自定义" :value="6" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -71,7 +72,8 @@ const imageFixedMap = {
   '2': [16, 9],
   '3': [3, 5],
   '4': [21, 9],
-  '5': false
+  '5': [2, 1],
+  '6': false
 }
 
 export default {
