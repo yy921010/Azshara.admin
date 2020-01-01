@@ -1,5 +1,11 @@
 name: build and auto publish
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    pull_request:
+      branches:
+        - master
 jobs:
   Tomokotv-Deploy-Action:
     name: Tomokotv-Deploy-Action
