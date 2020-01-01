@@ -20,7 +20,7 @@ jobs:
       - name: setup dependencies and build
         run: |
           npm i
-          npm run build
+          npm run build:prod
       - name: List output files
         run: ls
       - name: Sftp-Deploy-Action
