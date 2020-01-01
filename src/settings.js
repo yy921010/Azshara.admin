@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'L.D.R admin',
+  title: 'Tomokotv admin',
 
   /**
    * @type {boolean} true | false
@@ -14,5 +14,5 @@ module.exports = {
    */
   sidebarLogo: false,
 
-  imageService: 'http://127.0.0.1:7001/public/'
+  imageService: ''
 }

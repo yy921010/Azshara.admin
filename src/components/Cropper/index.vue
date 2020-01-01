@@ -28,7 +28,8 @@
             <el-option label="横向海报" :value="2" />
             <el-option label="竖直海报" :value="3" />
             <el-option label="宣传海报" :value="4" />
-            <el-option label="自定义" :value="5" />
+            <el-option label="2:1 logo" :value="5" />
+            <el-option label="自定义" :value="6" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -39,21 +40,21 @@
     </el-dialog>
     <el-upload
       action=""
-      drag
       :auto-upload="false"
-      :on-change="changeUpload"
       :show-file-list="false"
       :limit="limit"
+      :on-change="changeUpload"
+      :before-upload="beforeUpload"
       accept="image/jpeg,image/gif,image/png"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">点击上传</div>
-      <div class="el-upload__tip">支持绝大多数图片格式，单张图片最大支持5MB</div>
+      <div class="el-upload__tip">单张图片最大支持5MB</div>
     </el-upload>
     <div class="poster__preview">
       <ul class="previews">
-        <li v-for="(item,index) in previewPictures" :key="index" class="preview-item">
-          <preview-image :id="item.id" :name="item.name" :src="item.path" @onImage="removeUpload" />
+        <li v-for="(item,index) in viewPictures" :key="index" class="preview-item">
+          <preview-image :name="item.name" :src="item.url" @onImage="removeUpload" />
         </li>
       </ul>
     </div>
@@ -64,19 +65,19 @@
 
 import { setFormDate } from '@/utils'
 import previewImage from './PreviewImage'
-import { deleteImage, addImage } from '@api/image-service'
-import { mapState, mapMutations } from 'vuex'
+import { addImage } from '@api/image-service'
 
 const imageFixedMap = {
   '1': [1, 1],
   '2': [16, 9],
   '3': [3, 5],
   '4': [21, 9],
-  '5': false
+  '5': [2, 1],
+  '6': false
 }
 
 export default {
-  name: 'Index',
+  name: 'Cropper',
   components: {
     previewImage
   },
@@ -116,25 +117,20 @@ export default {
       original: false, // 上传图片按照原始比例渲染
       centerBox: true, // 截图框是否被限制在图片里面
       infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
-    }
+    },
+    viewPictures: []
   }),
-  computed: {
-    ...mapState('image', {
-      previewPictures: s => s.previewPictures
-    })
-  },
   mounted() {
-    this.clearPictures()
+    this.clearPicture()
   },
   methods: {
-    ...mapMutations('image', {
-      'addPictureArrs': 'ADD_PICTURE_ARR',
-      'deletePictureById': 'DELETE_PICTURE_BY_ID',
-      'clearPictures': 'CLEAR_PICTURE'
-    }),
 
     getCropBlob(fn) {
       return this.$refs.cropper.getCropBlob(fn)
+    },
+
+    clearPicture() {
+      this.viewPictures = []
     },
 
     dialogAction(actionStr) {
@@ -145,11 +141,8 @@ export default {
         return
       }
       this.beginUploadImage()
-      // 后续通知底层进行图片添加
     },
-    /**
-     * 开始文件上传
-     */
+
     beginUploadImage() {
       this.$refs.cropper.getCropBlob(async data => {
         const optionDate = setFormDate({
@@ -162,12 +155,13 @@ export default {
           }
         })
         const resp = await addImage(optionDate)
-        this.addPictureArrs({
-          name: `${resp.fileName}`,
-          id: resp.imageId,
-          path: resp.path
+        const picUrl = resp.pictureUrl
+        const fileName = picUrl.split('/')[picUrl.split('/').length - 1]
+        this.viewPictures.push({
+          name: fileName,
+          url: picUrl
         })
-        this.$emit('onCropper', resp.imageId)
+        this.$emit('onCropper', this.viewPictures)
       })
     },
 
@@ -182,12 +176,20 @@ export default {
       this.$refs.cropper.refresh()
     },
 
-    changeUpload(file) {
+    beforeUpload(file) {
       const isLt5M = file.size / 1024 / 1024 < 5
-      const _this = this
       if (!isLt5M) {
         this.$message.error('上传文件大小不能超过 5MB!')
-        return false
+      }
+      return isLt5M
+    },
+
+    changeUpload(file) {
+      const _this = this
+      const isLt5M = file.size / 1024 / 1024 < 5
+      if (!isLt5M) {
+        this.$message.error('上传文件大小不能超过 5MB!')
+        return
       }
       const reader = new FileReader()
       reader.readAsDataURL(file.raw)
@@ -203,9 +205,8 @@ export default {
      * @param id actorId
      * @returns {Promise<void>}
      */
-    async removeUpload(id) {
-      this.deletePictureById(id)
-      await deleteImage(id)
+    async removeUpload(picName) {
+      this.viewPictures = this.viewPictures.filter(item => item.name !== picName)
     }
   }
 }
@@ -216,6 +217,7 @@ export default {
     list-style: none;
     padding: 0;
     display: flex;
+    justify-content: center;
     .preview-item{
         margin-right: 15px;
     }

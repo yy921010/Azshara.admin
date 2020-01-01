@@ -1,12 +1,10 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { Notification } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import Cookies from 'js-cookie'
-
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API + `/${process.env.VUE_APP_API_VERSION}`, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
@@ -15,68 +13,59 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    console.log('request config--->', config)
-    if (store.getters.token) {
+    if (store.getters.token && /token/.test(config.url)) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
-      config.headers['x-csrf-token'] = Cookies.get('csrfToken')
+      config.headers['Authorization'] = 'Bearer ' + getToken()
+      // config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
+    } else if (config.url && /token/.test(config.url)) {
+      config.headers['Authorization'] = 'Basic ' + process.env.VUE_APP_DEVICE_TOKEN
     }
     return config
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
 
 // response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
+    const url = response.config.url
     const responseData = response.data
-    const code = responseData.code
     const msg = responseData.msg
+    const status = responseData.status
     const data = responseData.data
-    // if the custom code is not 20000, it is judged as an error.
-    switch (code) {
-      case 0:
+    if (/token/.test(url)) {
+      return responseData
+    }
+    switch (status) {
+      case 'success':
         return data
-      case 50008:
-      case 50012:
-      case 50014:
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+      case 'failed':
+        Notification({
+          title: '错误消息',
+          message: msg,
           type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
         })
         return Promise.reject(new Error(msg || 'Error'))
-      default:
-        return Promise.reject(new Error('Error'))
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    const errorCode = error.request.status
+    const errorUrl = error.config.url
+    const errorBody = error.response.data
+    if (/token/.test(errorUrl)) {
+      Notification({
+        title: '错误消息',
+        message: errorBody.error_description,
+        type: 'warning'
+      })
+    }
+
+    store.commit('errorMessage/showErrorMsgByCode', { errorCode, errorUrl })
     return Promise.reject(error)
   }
 )

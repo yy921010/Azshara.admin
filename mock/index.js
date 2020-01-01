@@ -2,15 +2,25 @@ import Mock from 'mockjs'
 import { param2Obj } from '../src/utils'
 
 import user from './user'
-import table from './table'
-import person from './person'
 import content from './contents'
+import genre from './genres'
+import actor from './actor'
+import aggregation from './aggregation'
+import navigator from './navigator'
+import image from './image'
+import channel from './channel'
+import program from './program'
 
 const mocks = [
   ...user,
-  ...table,
-  ...person,
-  ...content
+  ...content,
+  ...genre,
+  ...actor,
+  ...aggregation,
+  ...navigator,
+  ...image,
+  ...channel,
+  ...program
 ]
 
 // for front mock

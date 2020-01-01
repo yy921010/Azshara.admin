@@ -16,6 +16,16 @@ const aggregationRouter = [{
         title: '楼层管理',
         icon: 'floor'
       }
+    },
+    {
+      path: 'aggregationDetail',
+      hidden: true,
+      name: 'aggregationDetail',
+      component: () => import('@views/aggregation/aggregation-detail'),
+      meta: {
+        title: '楼层编辑',
+        icon: 'floor'
+      }
     }
   ]
 }]

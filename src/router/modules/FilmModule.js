@@ -11,7 +11,7 @@ const contentRouter = [
         name: 'contentActor',
         component: () => import('@views/content/actor/actor'),
         meta: {
-          title: '演员',
+          title: '演员信息',
           icon: 'actor'
         }
       },
@@ -20,7 +20,7 @@ const contentRouter = [
         name: 'contentGenre',
         component: () => import('@views/content/genres/genres'),
         meta: {
-          title: '流派',
+          title: '流派信息',
           icon: 'genres'
         }
       },
@@ -29,7 +29,7 @@ const contentRouter = [
         name: 'contentIndex',
         component: () => import('@views/content/video/video'),
         meta: {
-          title: '浏览',
+          title: '基本信息',
           icon: 'video'
         }
       },

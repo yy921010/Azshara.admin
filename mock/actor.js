@@ -6,8 +6,8 @@ const data = Mock.mock({
     'type|1': ['1', '2'],
     name: '@cname',
     introduce: '@cparagraph',
-    createdTime: '@datetime',
-    updateTime: '@datetime',
+    createAt: '@datetime',
+    updateAt: '@datetime',
     'pictures|1': [{
       url: '@image(100x100)',
       minSize: '1x1'
@@ -28,7 +28,7 @@ const personItem = Mock.mock({
 
 export default [
   {
-    url: '/person',
+    url: '/actor',
     type: 'get',
     response: config => {
       const items = data.items

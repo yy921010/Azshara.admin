@@ -1,7 +1,7 @@
 <template>
   <div class="poster">
     <div class="poster__mask">
-      <el-button type="danger" icon="el-icon-delete" circle class="delete-button" @click="deletePoster(id)" />
+      <el-button type="danger" icon="el-icon-delete" circle class="delete-button" @click="deletePoster()" />
     </div>
     <img class="poster__main" :src="getShowSrc" :alt="name">
   </div>
@@ -13,10 +13,6 @@ import Settings from '../../settings'
 export default {
   name: 'PreviewImage',
   props: {
-    id: {
-      type: Number,
-      default: null
-    },
     name: {
       type: String,
       default: ''
@@ -28,12 +24,12 @@ export default {
   },
   computed: {
     getShowSrc() {
-      return this.name ? Settings.imageService + this.src + '/' + this.name : Settings.imageService + this.src
+      return Settings.imageService + this.src
     }
   },
   methods: {
-    deletePoster(imageId) {
-      this.$emit('onImage', imageId)
+    deletePoster() {
+      this.$emit('onImage', this.name)
     }
   }
 }

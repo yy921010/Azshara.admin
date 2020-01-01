@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <table-filter @onCreate="addAggregation" />
+    <table-filter @onCreate="addPageInfo" />
     <el-table
-      :data="aggregation.items"
+      :data="pages.items"
       border
       fit
       highlight-current-row
@@ -13,14 +13,15 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="楼层名" prop="name" sortable="custom" align="center">
+      <el-table-column label="页面名称" prop="name" sortable="custom" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.floorName }}</span>
+          <span>{{ scope.row.pageName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="楼层样式" prop="name" sortable="custom" align="center">
+      <el-table-column label="是否显示" prop="name" sortable="custom" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.floorStyle }}</span>
+          <el-tag v-if="scope.row.pageShape === 1">显示</el-tag>
+          <el-tag v-else type="danger">隐藏</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createdTime" align="center">
@@ -35,60 +36,81 @@
       </el-table-column>
       <el-table-column label="操作" prop="id" align="center">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="editAggregation(row)">
+          <el-button type="primary" size="mini" @click="editPage(row)">
             编辑
           </el-button>
           <el-button
             v-if="row.status!='deleted'"
             size="mini"
             type="danger"
-            @click="deleteAggregation(row,'deleted')"
+            @click="deletePage(row,'deleted')"
           >
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <Pagination :total="aggregation.total" @change="paginationChange" />
+    <Pagination :total="pages.total" @changePage="changePage" />
+    <page-detail :is-show="detailVisible" :detail="pageDetail" @onDetail="onDetailShow" />
   </div>
 </template>
 
 <script>
 import Pagination from '@components/Pagination'
 import TableFilter from '@components/TableFilter'
-import { getAggregation } from '@api/aggregation-service'
+import pageDetail from './page-detail'
+import { getPage, updatePage, deletePage, addPage } from '@api/page-service'
 export default {
-  name: 'Aggregation',
+  name: 'PageShow',
   components: {
     Pagination,
-    TableFilter
+    TableFilter,
+    pageDetail
   },
   data() {
     return {
-      aggregation: {}
+      pages: {},
+      pageDetail: {},
+      detailVisible: false,
+      detailStatus: ''
     }
   },
   mounted() {
-    this.getAggregation()
+    this.getPageByPageNumber()
   },
   methods: {
-    async getAggregation(pageNumber = 1) {
+    async getPageByPageNumber(pageNumber = 1) {
       const pageSize = 20
-      this.aggregation = await getAggregation({
-        pageNumber,
-        pageSize
-      })
+      this.pages = await getPage({ pageSize, pageNumber })
     },
-    addAggregation() {
-      this.$router.push({
-        name: 'aggregationDetail'
-      })
+    addPageInfo() {
+
     },
-    editAggregation() {},
-    deleteAggregation() {},
-    paginationChange(pageNumber) {
-      this.getAggregation(pageNumber)
+    changePage(pageNumber) {
+      this.getPageByPageNumber(pageNumber)
+    },
+    editPage() {
+
+    },
+    onDetailShow() {
+
+    },
+    deletePage({ id, pageName }) {
+      this.$confirm(`是否删除${pageName}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await deletePage(id)
+        await this.getPageByPageNumber()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }, () => {
+      })
     }
+
   }
 }
 </script>

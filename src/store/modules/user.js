@@ -1,11 +1,11 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/user-service'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
-  name: '',
-  avatar: ''
+  avatar: '',
+  username: ''
 }
 
 const mutations = {
@@ -13,38 +13,42 @@ const mutations = {
     state.token = token
   },
   SET_NAME: (state, name) => {
-    state.name = name
+    state.username = name
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_USERNAME: (state, username) => {
+    state.username = username
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  async login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { token } = response
-        commit('SET_TOKEN', token)
-        setToken(token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      login({ username: username.trim(), password: password })
+        .then(response => {
+          commit('SET_TOKEN', response.access_token)
+          commit('SET_USERNAME', username)
+          sessionStorage.setItem('username', username)
+          setToken(response.access_token)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
     })
   },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        console.log(response)
-        const { name, avatar } = response
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+      const username = state.username ? state.username : sessionStorage.getItem('username')
+      getInfo(username).then(response => {
+        const { username, avatarUrl } = response
+        commit('SET_NAME', username)
+        commit('SET_AVATAR', avatarUrl)
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -55,8 +59,16 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      const client64 = process.env.VUE_APP_DEVICE_TOKEN
+      const clientString = atob(client64)
+      const clientIds = clientString.split(':')
+      logout({
+        token: state.token,
+        clientId: clientIds[0],
+        clientSecret: clientIds[1]
+      }).then(() => {
         commit('SET_TOKEN', '')
+        sessionStorage.removeItem('username')
         removeToken()
         resetRouter()
         resolve()
