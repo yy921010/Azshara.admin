@@ -1,5 +1,11 @@
 name: build and auto publish
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    pull_request:
+      branches:
+        - master
 jobs:
   Tomokotv-Deploy-Action:
     name: Tomokotv-Deploy-Action
@@ -14,7 +20,7 @@ jobs:
       - name: setup dependencies and build
         run: |
           npm i
-          npm run build
+          npm run build:prod
       - name: List output files
         run: ls
       - name: Sftp-Deploy-Action
