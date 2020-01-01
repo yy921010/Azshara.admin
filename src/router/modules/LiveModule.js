@@ -16,7 +16,7 @@ const UserModuleRouter = [
         }
       },
       {
-        path: 'program',
+        path: 'program/:channelName',
         name: 'programModule',
         component: () => import('@/views/live/program'),
         meta: {

@@ -33,7 +33,7 @@
           <span>{{ $dayjs(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" prop="id" align="center">
+      <el-table-column label="操作">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="editChannel(row)">
             编辑
@@ -45,6 +45,9 @@
             @click="delChannel(row,'deleted')"
           >
             删除
+          </el-button>
+          <el-button type="info" size="mini" @click="enterProgram(row)">
+            节目单
           </el-button>
         </template>
       </el-table-column>
@@ -82,20 +85,39 @@ export default {
     }
   },
   async mounted() {
-    this.getChannel()
+    this.getChannel({
+      pageSize: 20,
+      pageNumber: 1
+    })
   },
   methods: {
-    async getChannel() {
-      const data = await getChannel()
+
+    async getChannel({ pageSize, pageNumber }) {
+      const data = await getChannel({ pageSize, pageNumber })
       this.channel = data
     },
+
     _initDetail({ channelName, id, logo, playUrl }) {
       this.channelDetail.channelName = channelName
       this.channelDetail.id = id
       this.channelDetail.logo = logo
       this.channelDetail.playUrl = playUrl
     },
-    paginationChange() {},
+
+    enterProgram({ channelName }) {
+      this.$router.push({
+        name: 'programModule',
+        params: {
+          channelName
+        }
+      })
+    },
+
+    async paginationChange(pageNumber) {
+      const pageSize = 20
+      this.channel = await getChannel(pageNumber, pageSize)
+    },
+
     delChannel({ channelName }) {
       this.$confirm(`是否删除${channelName}`, {
         confirmButtonText: '确定',
@@ -103,13 +125,14 @@ export default {
         type: 'warning'
       }).then(async() => {
         await delChannel(channelName)
-        await this.getChannel()
+        await this.getChannel({})
         this.$message({
           type: 'success',
           message: '删除成功!'
         })
       })
     },
+
     editChannel({ channelName, playUrl, logo, id }) {
       this.detailStatus = 'EDIT'
       this.detailVisible = true
@@ -120,11 +143,13 @@ export default {
         logo
       })
     },
+
     addChannel() {
       this.detailVisible = true
       this.detailStatus = 'ADD'
       this._initDetail({})
     },
+
     async onDetail({ action, detail }) {
       this.detailVisible = false
       if (action === 'cancel') {

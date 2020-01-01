@@ -34,3 +34,10 @@ export function delChannel(channelName = '') {
   })
 }
 
+export function getChannelByChannelName(channelName) {
+  return request({
+    url: `${url}/${channelName}`,
+    method: 'get'
+  })
+}
+
