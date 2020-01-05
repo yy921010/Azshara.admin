@@ -43,10 +43,10 @@ module.exports = {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    },
-    after: process.env.NODE_ENV === 'mock' ? require('./mock/mock-server.js') : function() {
-
     }
+    // after: process.env.NODE_ENV === 'mock' ? require('./mock/mock-server.js') : function() {
+    //
+    // }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
