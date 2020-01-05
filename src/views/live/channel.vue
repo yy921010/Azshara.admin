@@ -167,7 +167,7 @@ export default {
           await updateChannel(detail, detail.id)
           message = '更新成功'
       }
-      await this.getChannel()
+      await this.getChannel({})
       this.$message({
         type: 'success',
         message
