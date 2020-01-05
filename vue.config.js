@@ -25,7 +25,7 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
-  productionSourceMap: false,
+  productionSourceMap: true,
   devServer: {
     port: port,
     open: true,
@@ -44,7 +44,9 @@ module.exports = {
         }
       }
     },
-    after: require('./mock/mock-server.js')
+    after: process.env.NODE_ENV === 'mock' ? require('./mock/mock-server.js') : function() {
+
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
