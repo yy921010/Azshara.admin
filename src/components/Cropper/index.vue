@@ -39,11 +39,13 @@
       </span>
     </el-dialog>
     <el-upload
+      ref="upload"
       action=""
       :auto-upload="false"
       :show-file-list="false"
       :limit="limit"
       :on-change="changeUpload"
+      :on-exceed="exceed"
       :before-upload="beforeUpload"
       accept="image/jpeg,image/gif,image/png"
     >
@@ -115,16 +117,29 @@ export default {
       full: true, // 是否输出原图比例的截图
       canMoveBox: true, // 截图框能否拖动
       original: false, // 上传图片按照原始比例渲染
-      centerBox: true, // 截图框是否被限制在图片里面
+      centerBox: false, // 截图框是否被限制在图片里面
       infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
     },
-    viewPictures: []
+    viewPictures: [],
+    reader: null
   }),
   mounted() {
+    this.reader = new FileReader()
+    const _this = this
+    this.reader.onload = function(e) {
+      // 将图片base64的数据传递给vueCropper组件
+      _this.url = this.result
+      _this.cropperVisible = true
+    }
     this.clearPicture()
   },
   methods: {
-
+    exceed() {
+      this.$message({
+        type: 'warning',
+        message: '已经超出最大上传文件'
+      })
+    },
     getCropBlob(fn) {
       return this.$refs.cropper.getCropBlob(fn)
     },
@@ -138,6 +153,7 @@ export default {
       if (actionStr === 'cancel') {
         this.url = ''
         this.fileInfo = ''
+        this.clearPicture()
         return
       }
       this.beginUploadImage()
@@ -162,6 +178,7 @@ export default {
           url: picUrl
         })
         this.$emit('onCropper', this.viewPictures)
+        this.destroyRender()
       })
     },
 
@@ -185,20 +202,18 @@ export default {
     },
 
     changeUpload(file) {
-      const _this = this
       const isLt5M = file.size / 1024 / 1024 < 5
       if (!isLt5M) {
         this.$message.error('上传文件大小不能超过 5MB!')
         return
       }
-      const reader = new FileReader()
-      reader.readAsDataURL(file.raw)
-      reader.onload = function(e) {
-        // 将图片base64的数据传递给vueCropper组件
-        _this.url = this.result
-        _this.cropperVisible = true
-      }
+      this.reader.readAsDataURL(file.raw)
       this.fileInfo = file
+    },
+
+    destroyRender() {
+      this.fileInfo = null
+      this.$refs.upload.clearFiles()
     },
     /**
      *

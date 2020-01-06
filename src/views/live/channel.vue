@@ -81,7 +81,8 @@ export default {
         logo: ''
       },
       detailVisible: false,
-      detailStatus: ''
+      detailStatus: '',
+      currentPageNumber: 0
     }
   },
   async mounted() {
@@ -114,8 +115,14 @@ export default {
     },
 
     async paginationChange(pageNumber) {
+      this.currentPageNumber = pageNumber
+      this.refreshPageByCurPageNumber()
+    },
+
+    async refreshPageByCurPageNumber() {
       const pageSize = 20
-      this.channel = await getChannel(pageNumber, pageSize)
+      const pageNumber = this.currentPageNumber
+      this.channel = await getChannel({ pageNumber, pageSize })
     },
 
     delChannel({ channelName }) {
@@ -167,7 +174,7 @@ export default {
           await updateChannel(detail, detail.id)
           message = '更新成功'
       }
-      await this.getChannel({})
+      await this.refreshPageByCurPageNumber()
       this.$message({
         type: 'success',
         message
