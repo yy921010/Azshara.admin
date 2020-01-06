@@ -82,7 +82,7 @@ export default {
       },
       detailVisible: false,
       detailStatus: '',
-      currentPageNumber: 0
+      currentPageNumber: 1
     }
   },
   async mounted() {
