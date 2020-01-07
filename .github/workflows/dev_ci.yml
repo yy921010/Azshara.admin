@@ -1,11 +1,11 @@
-name: build and auto publish
+name: 自动发布dev分支
 on:
   push:
     branches:
-      - master
-    pull_request:
-      branches:
-        - master
+      - dev
+  pull_request:
+    branches:
+      - dev
 jobs:
   Tomokotv-Deploy-Action:
     name: Tomokotv-Deploy-Action
@@ -31,5 +31,5 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           METHOD: sftp
           LOCAL_DIR: dist
-          REMOTE_DIR: /home/www/ams
+          REMOTE_DIR: /home/www/admin_dev
           ARGS: --delete
