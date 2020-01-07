@@ -8,7 +8,7 @@ export default [
         code: 0,
         data: {
           url: 'http://img5.mtime.cn/mg/2019/12/09/160147.27169406_285X160X4.jpg',
-          name: 'demo.jpg'
+          name: 'demos123.jpg'
         }
       }
     }

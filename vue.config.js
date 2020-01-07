@@ -43,10 +43,8 @@ module.exports = {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    }
-    // after: process.env.NODE_ENV === 'mock' ? require('./mock/mock-server.js') : function() {
-    //
-    // }
+    },
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -67,7 +65,7 @@ module.exports = {
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
-
+    console.log('NODE_ENV=', process.env.NODE_ENV)
     // set svg-sprite-loader
     config.module
       .rule('svg')

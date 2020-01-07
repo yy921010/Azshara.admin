@@ -20,7 +20,7 @@ export default [
     type: 'get',
     response: config => {
       return {
-        code: 0,
+        status: 'success',
         data: {
           total: 20,
           items: data.items

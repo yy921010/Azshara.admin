@@ -25,7 +25,7 @@ import '@/permission' // permission control
  * please remove it before going online! ! !
  */
 import { mockXHR } from '../mock'
-if (process.env.NODE_ENV === 'mock') {
+if (process.env.VUE_APP_ENV === 'mock') {
   mockXHR()
 }
 import VueCropper from 'vue-cropper'

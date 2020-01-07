@@ -2,7 +2,7 @@
 export default [
   // user login
   {
-    url: '/oauth2/token',
+    url: '/token',
     type: 'post',
     response: config => {
       return {
@@ -33,7 +33,6 @@ export default [
     response: config => {
       const { username } = config.query
       return {
-        code: 0,
         status: 'success',
         data: {
           username,
@@ -46,11 +45,10 @@ export default [
 
   // user logout
   {
-    url: '/oauth2/revoke-token',
+    url: '/revoke-token',
     type: 'post',
     response: _ => {
       return {
-        code: 0,
         data: 'success'
       }
     }

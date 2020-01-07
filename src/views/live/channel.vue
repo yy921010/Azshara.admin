@@ -95,6 +95,7 @@ export default {
 
     async getChannel({ pageSize, pageNumber }) {
       const data = await getChannel({ pageSize, pageNumber })
+      console.log(data)
       this.channel = data
     },
 

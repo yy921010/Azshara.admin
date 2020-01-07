@@ -33,7 +33,7 @@ export default [
     response: config => {
       const items = data.items
       return {
-        code: 0,
+        status: 'success',
         data: {
           total: items.length,
           items: items
@@ -47,7 +47,7 @@ export default [
     type: 'put',
     response: config => {
       return {
-        code: 0,
+        status: 'success',
         data: personItem,
         msg: ''
       }
@@ -58,7 +58,7 @@ export default [
     type: 'post',
     response: config => {
       return {
-        code: 0,
+        status: 'success',
         data: personItem,
         msg: ''
       }
@@ -69,7 +69,7 @@ export default [
     type: 'delete',
     response: config => {
       return {
-        code: 0,
+        status: 'success',
         data: personItem,
         msg: ''
       }

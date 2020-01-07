@@ -47,9 +47,15 @@ export function mockXHR() {
       if (respond instanceof Function) {
         const { body, type, url } = options
         // https://expressjs.com/en/4x/api.html#req
+        let body1 = body
+        try {
+          body1 = JSON.parse(body)
+        } catch (e) {
+          console.warn('error1', e)
+        }
         result = respond({
           method: type,
-          body: JSON.parse(body),
+          body: body1,
           query: param2Obj(url)
         })
       } else {
