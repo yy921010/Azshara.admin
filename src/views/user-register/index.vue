@@ -9,11 +9,8 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">tomokotv 用户注册</h3>
+        <h3 class="title">欢迎注册</h3>
       </div>
-      <el-form-item class="avatar-item">
-        <Cropper scope="avatar" :limit="1" @onCropper="handleCropper" />
-      </el-form-item>
       <el-form-item prop="nickName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -28,35 +25,21 @@
           auto-complete="on"
         />
       </el-form-item>
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="registerModel.username"
+          ref="userName"
+          v-model="registerModel.userName"
           placeholder="用户名"
-          name="username"
+          name="userName"
           type="text"
           tabindex="2"
           auto-complete="on"
         />
       </el-form-item>
 
-      <el-form-item prop="email">
-        <span class="svg-container">
-          <svg-icon icon-class="email" />
-        </span>
-        <el-input
-          ref="email"
-          v-model="registerModel.email"
-          placeholder="邮箱"
-          name="username"
-          type="email"
-          tabindex="3"
-          auto-complete="on"
-        />
-      </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -65,7 +48,7 @@
           ref="password"
           v-model="registerModel.password"
           placeholder="密码"
-          name="username"
+          name="password"
           type="password"
           tabindex="4"
           auto-complete="on"
@@ -79,7 +62,7 @@
           ref="repassword"
           v-model="registerModel.repassword"
           placeholder="请重新输入密码"
-          name="username"
+          name="rePassword"
           type="password"
           tabindex="5"
           auto-complete="on"
@@ -98,15 +81,11 @@
 
 <script>
 import { userRegister } from '@api/user-service'
-import Cropper from '@components/Cropper'
 import { mapState } from 'vuex'
 
 let passwordCache = ''
 export default {
   name: 'UserRegister',
-  components: {
-    Cropper
-  },
   data() {
     const passwordValidate = (rule, value, callback) => {
       passwordCache = value
@@ -125,20 +104,19 @@ export default {
     }
     return {
       registerModel: {
-        username: '',
-        email: '',
+        userName: '',
+        mail: '',
         nickName: '',
         password: '',
         repassword: ''
       },
       loading: false,
       registerRule: {
-        username: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
-        nickName: [{ required: true, trigger: 'blur', message: '请输入昵称' }],
-        email: [
-          { required: true, trigger: 'blur', message: '请输入邮箱' },
-          { trigger: ['blur', 'change'], type: 'email', message: '请输入正确的邮箱' }
+        userName: [
+          { required: true, trigger: 'blur', message: '请输入用户名' },
+          { trigger: ['blur', 'change'], type: 'email', message: '用户必须是一个邮箱' }
         ],
+        nickName: [{ required: true, trigger: 'blur', message: '请输入昵称' }],
         password: [
           { required: true, trigger: 'blur', message: '请输入密码' },
           { trigger: ['blur'], type: 'string', message: '请输入正确的密码' },
@@ -162,17 +140,24 @@ export default {
       this.$refs.registerForm.validate(async valid => {
         if (valid) {
           const userInfo = this.registerModel
+          userInfo.mail = userInfo.userName
+          userInfo.avatar = 'https://avatars1.githubusercontent.com/u/15714962?s=460&u=b6eec1ca20669684cf673fd36d12247ddce2fc15&v=4'
           delete userInfo.repassword
           this.loading = true
-          await userRegister(userInfo)
-          this.$notify({
-            message: '用户注册成功，请进入邮箱激活',
-            type: 'success'
-          })
-          this.loading = false
-          setTimeout(() => {
-            this.$router.push('/login')
-          }, 2000)
+          try {
+            await userRegister(userInfo)
+            this.$notify({
+              message: '用户注册成功，请进入邮箱激活',
+              type: 'success'
+            })
+            this.loading = false
+            setTimeout(() => {
+              this.$router.push('/login')
+            }, 2000)
+          } catch (e) {
+            this.$message.error(e.toString())
+            this.loading = false
+          }
         } else {
           return false
         }

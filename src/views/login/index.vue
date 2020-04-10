@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">Tomokotv Admin</h3>
+        <h3 class="title">Tomokotv Portal</h3>
       </div>
       <el-form-item prop="username">
         <span class="svg-container">
@@ -39,7 +39,7 @@
         </span>
       </el-form-item>
       <div class="button-wrap">
-        <el-button class="item-button" :loading="loading" type="success" @click.native.prevent="handleRegister">注册</el-button>
+        <el-button class="item-button" type="success" @click.native.prevent="handleRegister">注册</el-button>
         <el-button class="item-button" :loading="loading" type="primary" @click.native.prevent="handleLogin">登录</el-button>
       </div>
     </el-form>
