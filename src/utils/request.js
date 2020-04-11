@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Notification } from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 // create an axios instance
@@ -8,6 +8,12 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
+
+const createBaseToken = () => {
+  const clientId = localStorage.getItem('uuid')
+  const clientSecret = process.env.VUE_APP_DEVICE_TOKEN
+  return window.btoa(`${clientId}:${clientSecret}`)
+}
 
 // request interceptor
 service.interceptors.request.use(
@@ -20,7 +26,7 @@ service.interceptors.request.use(
       config.headers['Authorization'] = 'Bearer ' + getToken()
       // config.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8'
     } else if (config.url && /token/.test(config.url)) {
-      config.headers['Authorization'] = 'Basic ' + process.env.VUE_APP_DEVICE_TOKEN
+      config.headers['Authorization'] = `Basic ${createBaseToken()}`
     }
     return config
   },
@@ -36,19 +42,19 @@ service.interceptors.response.use(
     const url = response.config.url
     const responseData = response.data
     const msg = responseData.msg
-    const status = responseData.status
+    const code = responseData.code
     const data = responseData.data
     if (/token/.test(url)) {
       return responseData
     }
-    switch (status) {
-      case 'success':
+    switch (code + '') {
+      case '0':
         return data
-      case 'failed':
-        Notification({
+      default:
+        Message({
           title: '错误消息',
           message: msg,
-          type: 'warning'
+          type: 'error'
         })
         return Promise.reject(new Error(msg || 'Error'))
     }

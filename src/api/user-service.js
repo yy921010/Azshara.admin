@@ -7,7 +7,7 @@ export function login(data = {}) {
   params.append('username', data.username)
   params.append('password', data.password)
   return request({
-    url: '/token',
+    url: '/oauth/token',
     method: 'post',
     data: params
   })
@@ -15,7 +15,7 @@ export function login(data = {}) {
 
 export function getInfo(username) {
   return request({
-    url: `/user/${username}`,
+    url: `/user/normal?userName=${username}`,
     method: 'get'
   })
 }
@@ -50,12 +50,13 @@ export function getUser(pageNumber = 1, pageSize = 20) {
     }
   })
 }
-export function delUserByName(username) {
+export function delUser({ id, userId }) {
   return request({
     url: '/user',
     method: 'delete',
     params: {
-      username
+      id,
+      userId
     }
   })
 }

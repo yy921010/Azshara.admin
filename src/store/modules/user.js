@@ -46,9 +46,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       const username = state.username ? state.username : sessionStorage.getItem('username')
       getInfo(username).then(response => {
-        const { username, avatarUrl } = response
-        commit('SET_NAME', username)
-        commit('SET_AVATAR', avatarUrl)
+        const { userName, avatar } = response
+        commit('SET_NAME', userName)
+        commit('SET_AVATAR', avatar)
         resolve(response)
       }).catch(error => {
         reject(error)

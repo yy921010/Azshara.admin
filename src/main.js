@@ -25,6 +25,7 @@ import '@/permission' // permission control
  * please remove it before going online! ! !
  */
 import { mockXHR } from '../mock'
+
 if (process.env.VUE_APP_ENV === 'mock') {
   mockXHR()
 }
@@ -41,5 +42,9 @@ new Vue({
   el: '#app',
   router,
   store,
+  async mounted() {
+    await this.$store.dispatch('client/addClient')
+  },
   render: h => h(App)
+
 })

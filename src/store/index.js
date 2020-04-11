@@ -7,6 +7,7 @@ import user from './modules/user'
 import content from './modules/content'
 import image from './modules/image'
 import errorMessage from './modules/error_message'
+import client from './modules/client'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
     user,
     content,
     image,
-    errorMessage
+    errorMessage,
+    client
   },
   getters
 })
