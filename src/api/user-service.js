@@ -60,3 +60,11 @@ export function delUser({ id, userId }) {
     }
   })
 }
+
+export function editUser(userInfo) {
+  return request({
+    url: '/user',
+    method: 'post',
+    data: userInfo
+  })
+}

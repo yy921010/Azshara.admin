@@ -11,13 +11,13 @@ const actions = {
     const randon = Math.random()
     if (!localStorage.getItem('uuid')) {
       const uuid = uuidv5(`clientId+${randon}`, uuidv5.URL)
-      localStorage.setItem('uuid', uuid)
       await addClient({
         scope: 'pc',
         clientName: 'admin',
         clientId: uuid,
         clientSecret: process.env.VUE_APP_DEVICE_TOKEN
       })
+      localStorage.setItem('uuid', uuid)
     }
   }
 }

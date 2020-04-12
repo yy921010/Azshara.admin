@@ -51,7 +51,7 @@
       </el-table-column>
       <el-table-column label="操作" prop="id" align="center">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="editUser">
+          <el-button type="primary" size="mini" @click="editUser(row)">
             编辑
           </el-button>
           <el-button
@@ -66,25 +66,30 @@
       </el-table-column>
     </el-table>
     <Pagination :total="users.total" @changePage="changePage" />
+    <UserDetail :detail="userInfo" :is-show="visibleDialog" @onDetail="onUserDetail" />
   </div>
 </template>
 
 <script>
 import Pagination from '@components/Pagination'
 import TableFilter from '@components/TableFilter'
-import { getUser, delUser } from '@api/user-service'
+import { getUser, delUser,editUser } from '@api/user-service'
+import UserDetail from './UserDetail'
 
 export default {
   name: 'User',
   components: {
     Pagination,
-    TableFilter
+    TableFilter,
+    UserDetail
   },
   data() {
     return {
       users: {},
       detailVisible: false,
-      detailStatus: ''
+      detailStatus: '',
+      visibleDialog: false,
+      userInfo: {}
     }
   },
   async mounted() {
@@ -112,7 +117,13 @@ export default {
     changePage(pageNumber) {
       this.getUserByPageNumber(pageNumber)
     },
-    editUser() {
+    editUser(userInfo) {
+      this.visibleDialog = true
+      this.userInfo = userInfo
+    },
+    onUserDetail({ action }) {
+      this.visibleDialog = false
+      editUser(this.userInfo)
     }
   }
 }
